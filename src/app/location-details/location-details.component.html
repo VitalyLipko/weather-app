@@ -1,0 +1,43 @@
+<div class="row">
+  <div class="col-12 text-center" id="loc-name">{{currentWeatherData?.name}}</div>
+  <div class="col-md-7 text-center" id="main-block">
+    <div id="current-weather" class="d-inline-flex flex-row">
+      <span id="current-temp">
+        {{currentWeatherData?.main.temp}}&deg;
+      </span>
+      <div id="current-weather-description">
+        <img src="/assets/ico/weather-conditions/{{currentWeatherData?.weather[0].icon}}.svg" alt="Иконка погоды"
+          id="weather-conditions-ico" class="d-block">
+        <span id="weather-condition">{{currentWeatherData?.weather[0].description}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-5 d-flex flex-column" id="additional-block">
+    <button type="button" class="btn btn-light btn-block d-md-none" data-toggle="collapse" data-target="#wrapper-param"
+      aria-expanded="false" aria-controls="wrapper-param">
+      <i class="fas fa-chevron-down"></i>
+    </button>
+    <div id="wrapper-param" class="collapse d-md-block">
+      <div id="wind">
+        <img src="/assets/ico/parameters/wind.svg" alt="Иконка ветра" class="size-ico">
+        <span>{{currentWeatherData?.wind.speed}} м/с, {{weather.fromGradToDir(currentWeatherData?.wind.deg)}}</span>
+      </div>
+      <div id="humidity">
+        <img src="/assets/ico/parameters/humidity.svg" alt="Иконка гигрометра" class="size-ico mr-2">
+        <span>{{currentWeatherData?.main.humidity}}%</span>
+      </div>
+      <div id="pressure">
+        <img src="/assets/ico/parameters/pressure.svg" alt="Иконка барометра" class="size-ico">
+        <span>{{weather.fromPaToHg(currentWeatherData?.main.pressure).toFixed(0)}} мм.рт.ст.</span>
+      </div>
+      <div id="sunrise">
+        <img src="/assets/ico/parameters/sunrise.svg" alt="Иконка восхода" class="size-ico">
+        <span>{{weather.fromUnixToDate(currentWeatherData?.sys.sunrise)}}</span>
+      </div>
+      <div id="sunrise">
+        <img src="/assets/ico/parameters/sunset.svg" alt="Иконка захода" class="size-ico">
+        <span>{{weather.fromUnixToDate(currentWeatherData?.sys.sunset)}}</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+#current-temp {
+    font-size: 6.2em;
+}
+
+#additional-block{
+    font-size: 1.5em;
+
+    .size-ico {
+        height: 3em;
+    } 
+    
+    #humidity {
+        position: relative;
+        left: 0.5em;
+        img {
+            height: 2em;
+            left: 2.1em;
+        }
+    }
+}
+
+#loc-name {
+    font-size: 2em;
+}
+
+#current-weather {
+
+   #weather-conditions-ico {
+        position: relative;
+        top: 1em;
+    } 
+
+    #weather-condition {
+        position: relative;
+        top: -0.5em;
+        font-size: 2em;
+    }
+}

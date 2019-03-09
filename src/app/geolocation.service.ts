@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { LowerCasePipe } from '@angular/common';
 
 import { WeatherService } from './weather.service';
 
@@ -11,8 +13,7 @@ export interface Position {
   providedIn: 'root'
 })
 export class GeolocationService {
-
-  constructor(private weather: WeatherService) { }
+  constructor(private weather: WeatherService, private router: Router, private lowerCasePipe: LowerCasePipe) { }
 
   isAvailable(): boolean {
     if ('geolocation' in navigator) return true;
@@ -27,15 +28,16 @@ export class GeolocationService {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        pos = position.coords;
-        console.log((pos.latitude).toFixed(2) + '; ' + (pos.longitude).toFixed(2));
-        this.weather.getCurrentWeatherData(pos).subscribe(
-          (data) => console.log(`Temp: ${data.main.temp}`),
+        this.weather.getCurrentWeatherData(position.coords).subscribe(
+          (data) => {
+            this.weather.saveCurrentWeatherData(data);
+            this.router.navigate([`${this.lowerCasePipe.transform(data.name)}`]);
+          },
           () => console.error('Error in retrieving data.')
-          );
+        );
       },
       (error) => console.error('Geolocation failure: ' + error.message),
-      { timeout: 15000, maximumAge: 60000 }
+      { timeout: 15000, maximumAge: 600000 }
     );
 
     return pos;
