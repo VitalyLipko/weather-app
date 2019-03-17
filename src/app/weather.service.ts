@@ -7,7 +7,7 @@ import { Position } from './geolocation.service';
 
 const API_KEY = 'f25ad0c5cec3176c83ad8d9daddb8fe2';
 
-export interface CurrentWeatherData {
+export interface WeatherData {
   coord: Coord;
   weather: Weather[];
   base: string;
@@ -21,6 +21,32 @@ export interface CurrentWeatherData {
   id: number;
   name: string;
   cod: number;
+}
+
+export interface ForecastData {
+  cod: number;
+  message: number;
+  city: City;
+  cnt: number;
+  list: List[];
+}
+
+interface City {
+  id: number;
+  name: string;
+  coord: Coord;
+  country: string;
+}
+
+export interface List {
+  dt: number;
+  main: Main;
+  weather: Weather[];
+  clouds: Clouds;
+  wind: Wind;
+  rain: number;
+  snow: number;
+  dt_txt: number;
 }
 
 interface Coord {
@@ -73,18 +99,32 @@ interface Sys {
   sunset: number;
 }
 
+interface UrlAPI {
+  weather: string;
+  forecast: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class WeatherService {
-  private url = 'https://api.openweathermap.org/data/2.5/weather?';
-  currentWeatherDataStorage: CurrentWeatherData;
+  private urlAPI: UrlAPI = {
+    weather: 'https://api.openweathermap.org/data/2.5/weather?',
+    forecast: 'https://api.openweathermap.org/data/2.5/forecast?'
+  }
+  weatherDataStorage: WeatherData;
+  forecastDataStorage: ForecastData;
   constructor(private http: HttpClient) { }
 
-  getCurrentWeatherData(position: Position): Observable<CurrentWeatherData> {
-    return this.http.get<CurrentWeatherData>(
-      `${this.url}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${API_KEY}`
+  getWeatherData(position: Position): Observable<WeatherData> {
+    return this.http.get<WeatherData>(
+      `${this.urlAPI.weather}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${API_KEY}`
+    ).pipe(retry(3), catchError(this.handleError));
+  }
+
+  getForecastData(position: Position): Observable<ForecastData> {
+    return this.http.get<ForecastData>(
+      `${this.urlAPI.forecast}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${API_KEY}`
     ).pipe(retry(3), catchError(this.handleError));
   }
 
@@ -97,12 +137,56 @@ export class WeatherService {
     return throwError('Something bad happened; please try again later.');
   }
 
-  getCurrentWeatherDataStorage(): Observable<CurrentWeatherData> {
-    return of(this.currentWeatherDataStorage);
+  getWeatherDataStorage(): Observable<WeatherData> {
+    return of(this.weatherDataStorage);
   }
 
-  saveCurrentWeatherData(data: CurrentWeatherData) {
-    this.currentWeatherDataStorage = data;
+  getForecastDataStorage(): Observable<ForecastData> {
+    return of(this.forecastDataStorage);
+  }
+
+  saveWeatherData(data: WeatherData) {
+    this.weatherDataStorage = data;
+  }
+
+  saveForecastData(data: ForecastData) {
+    this.forecastDataStorage = data;
+  }
+  //Получаем из списка пятидневного прогноза прогноз на дневные часы
+  getForecastDays(forecastList: List[]): List[] {
+    let forecastDays: List[] = [];
+    let hours: string;
+
+    for (let forecast of forecastList) {
+      hours = this.fromUnixToHours(forecast.dt);
+      if (hours === "12:00" || hours === "13:00" || hours === "14:00") forecastDays.push(forecast);
+    }
+
+    return forecastDays;
+  }
+  //Получаем из списка пятидневного прогноза прогноз на ночные часы
+  getForecastNight(forecastList: List[]): List[] {
+    let forecastNight: List[] = [];
+    let hours: string;
+
+    for (let forecast of forecastList) {
+      hours = this.fromUnixToHours(forecast.dt);
+      if (hours === "0:00" || hours === "01:00" || hours === "02:00") forecastNight.push(forecast);
+    }
+
+    return forecastNight;
+  }
+
+  //Получаем прогноз на ближайшие 24 часа
+  getForecastDay(forecastList: List[]): List[] {
+    let forecastDay: List[] = [];
+    let i: number = 0;
+
+    while(i < 8) {
+      forecastDay.push(forecastList[i++]);
+    }
+
+    return forecastDay;
   }
 
   //Переводим метеорологические градусы (азимут точки, откуда дует ветер) в направление
@@ -122,16 +206,37 @@ export class WeatherService {
     return (pressure * 0.75006)//0.75006 - эквивалент 1 гПа в мм.рт.ст.
   }
 
-  //Переводим UNIX-время в обычную дату
-  fromUnixToDate(unix: number): string {
-    let date = new Date(unix * 1000);//unix-время дано в миллисекундах, поэтому приводим к секундам
+  //Переводим UNIX-время в часы и минуты
+  fromUnixToHours(unix: number): string {
+    let date = new Date(unix * 1000);//unix-время дано в секундах, поэтому приводим к миллисекундам
     let hours: string, minutes: string;
-    
-    if(date.getHours() < 10) hours = '0' + date.getHours().toString();
-    else  hours = date.getHours().toString();
-    if(date.getMinutes() < 10) minutes = '0' + date.getMinutes().toString();
-    else  minutes = date.getMinutes().toString();
+
+    if (date.getHours() < 10) hours = '0' + date.getHours().toString();
+    else hours = date.getHours().toString();
+    if (date.getMinutes() < 10) minutes = '0' + date.getMinutes().toString();
+    else minutes = date.getMinutes().toString();
 
     return (hours + ':' + minutes);
+  }
+  //Переводим UNIX-время в день недели
+  fromUnixToDayOfWeek(unix: number): string {
+    let daysOfWeek: string[] = ['вск', 'пн', 'вт', 'ср', 'чт', 'пт', 'cб'];
+    let date = new Date(unix * 1000);
+
+    return daysOfWeek[date.getDay()];
+  }
+  //Переводим UNIX-время в месяц
+  fromUnixToMonth(unix: number): string {
+    let months: string[] = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа',
+      'сентября', 'октября', 'ноября', 'декабря'];
+    let date = new Date(unix * 1000);
+
+    return months[date.getMonth()];
+  }
+  //Переводим UNIX-время в день месяца
+  fromUnixToDayOfMonth(unix: number): number {
+    let date = new Date(unix * 1000);
+
+    return date.getDate();
   }
 }

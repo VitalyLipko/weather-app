@@ -27,20 +27,24 @@ export class GeolocationService {
     };
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        this.weather.getCurrentWeatherData(position.coords).subscribe(
-          (data) => {
-            this.weather.saveCurrentWeatherData(data);
-            this.router.navigate([`${this.lowerCasePipe.transform(data.name)}`]);
-          },
-          () => console.error('Error in retrieving data.')
-        );
-      },
+      (position) => this.successPosition(position),
       (error) => console.error('Geolocation failure: ' + error.message),
       { timeout: 15000, maximumAge: 600000 }
     );
 
     return pos;
+  }
+
+  successPosition(position) {
+    this.weather.getWeatherData(position.coords).subscribe(
+      (data) => this.weather.saveWeatherData(data),
+      () => console.error('Error in retrieving weather data.')
+    );
+    this.weather.getForecastData(position.coords).subscribe(
+      (data) => this.weather.saveForecastData(data),
+      () => console.error('Error in retrieving forecast data.'),
+      () => this.router.navigate([`${this.lowerCasePipe.transform(this.weather.weatherDataStorage.name)}`])
+    );
   }
 
 }

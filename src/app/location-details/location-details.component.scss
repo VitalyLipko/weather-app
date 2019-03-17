@@ -12,10 +12,21 @@
     #humidity {
         position: relative;
         left: 0.5em;
+        
         img {
             height: 2em;
             left: 2.1em;
         }
+    }
+
+    #sunrise {
+        position: relative;
+        top: -0.5em;
+    }
+
+    #sunset {
+        position: relative;
+        top: -1em;
     }
 }
 
@@ -34,5 +45,33 @@
         position: relative;
         top: -0.5em;
         font-size: 2em;
+    }
+}
+
+.forecast-temp-text {
+    font-size: 2.5em;
+}
+
+.night {
+    color: var(--gray);
+}
+
+.forecast-img, .forecast-weather-describe {
+    position: relative;
+    top: -0.5em;
+}
+
+#forecast-day{
+    overflow-y: auto;
+    overflow-x: auto;
+    white-space: nowrap;
+
+    .forecast-day-hours {
+        display: inline-block;
+
+        .forecast-day-hours-img {
+            width: 4em;
+        }
+
     }
 }

@@ -1,43 +1,78 @@
-<div class="row">
-  <div class="col-12 text-center" id="loc-name">{{currentWeatherData?.name}}</div>
+<div class="row mb-md-5">
+  <div class="col-12 text-center">
+    <span id="loc-name">{{weatherData?.name}}</span> 
+    <span class="d-block">Прогноз: сегодня, 
+      {{weather.fromUnixToDayOfMonth(weatherData?.dt)}}
+      {{weather.fromUnixToMonth(weatherData?.dt)}},
+      {{weather.fromUnixToHours(weatherData?.dt)}}
+    </span>
+  </div>
   <div class="col-md-7 text-center" id="main-block">
-    <div id="current-weather" class="d-inline-flex flex-row">
+    <div id="current-weather" class="d-inline-flex flex-row mb-md-2">
       <span id="current-temp">
-        {{currentWeatherData?.main.temp}}&deg;
+        {{weatherData?.main.temp}}&deg;
       </span>
       <div id="current-weather-description">
-        <img src="/assets/ico/weather-conditions/{{currentWeatherData?.weather[0].icon}}.svg" alt="Иконка погоды"
+        <img src="/assets/ico/weather-conditions/{{weatherData?.weather[0].icon}}.svg" alt="Иконка погоды"
           id="weather-conditions-ico" class="d-block">
-        <span id="weather-condition">{{currentWeatherData?.weather[0].description}}</span>
+        <span id="weather-condition">{{weatherData?.weather[0].description}}</span>
       </div>
+    </div>
+    <div id="forecast-day" class="mb-3 mb-md-0">
+      <div *ngFor="let forecastHour of forecastDay" class="forecast-day-hours">
+        <span>{{weather.fromUnixToHours(forecastHour.dt)}}</span>
+        <img src="/assets/ico/weather-conditions/{{forecastHour.weather[0].icon}}.svg" alt="Иконка погоды"
+          class="d-block forecast-day-hours-img">
+        <span>{{forecastHour.main.temp | number:'1.0-0'}}&deg;</span>
+      </div>
+
     </div>
   </div>
   <div class="col-md-5 d-flex flex-column" id="additional-block">
-    <button type="button" class="btn btn-light btn-block d-md-none" data-toggle="collapse" data-target="#wrapper-param"
+    <button type="button" class="btn btn-light btn-block d-md-none mb-3" data-toggle="collapse" data-target="#wrapper-param"
       aria-expanded="false" aria-controls="wrapper-param">
       <i class="fas fa-chevron-down"></i>
     </button>
     <div id="wrapper-param" class="collapse d-md-block">
       <div id="wind">
         <img src="/assets/ico/parameters/wind.svg" alt="Иконка ветра" class="size-ico">
-        <span>{{currentWeatherData?.wind.speed}} м/с, {{weather.fromGradToDir(currentWeatherData?.wind.deg)}}</span>
+        <span>{{weatherData?.wind.speed}} м/с, {{weather.fromGradToDir(weatherData?.wind.deg)}}</span>
       </div>
       <div id="humidity">
         <img src="/assets/ico/parameters/humidity.svg" alt="Иконка гигрометра" class="size-ico mr-2">
-        <span>{{currentWeatherData?.main.humidity}}%</span>
+        <span>{{weatherData?.main.humidity}}%</span>
       </div>
       <div id="pressure">
         <img src="/assets/ico/parameters/pressure.svg" alt="Иконка барометра" class="size-ico">
-        <span>{{weather.fromPaToHg(currentWeatherData?.main.pressure).toFixed(0)}} мм.рт.ст.</span>
+        <span>{{weather.fromPaToHg(weatherData?.main.pressure).toFixed(0)}} мм.рт.ст.</span>
       </div>
       <div id="sunrise">
         <img src="/assets/ico/parameters/sunrise.svg" alt="Иконка восхода" class="size-ico">
-        <span>{{weather.fromUnixToDate(currentWeatherData?.sys.sunrise)}}</span>
+        <span>{{weather.fromUnixToHours(weatherData?.sys.sunrise)}}</span>
       </div>
-      <div id="sunrise">
+      <div id="sunset">
         <img src="/assets/ico/parameters/sunset.svg" alt="Иконка захода" class="size-ico">
-        <span>{{weather.fromUnixToDate(currentWeatherData?.sys.sunset)}}</span>
+        <span>{{weather.fromUnixToHours(weatherData?.sys.sunset)}}</span>
       </div>
     </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2 text-center d-flex flex-row flex-sm-column"
+    *ngFor="let day of forecastDays; let i=index" [class.offset-xl-1]="i==0">
+    <div>
+      <span>{{weather.fromUnixToDayOfWeek(day.dt)}}</span>
+      <div>
+        <span>{{weather.fromUnixToDayOfMonth(day.dt)}} </span>
+        <span>{{weather.fromUnixToMonth(day.dt)}}</span>
+      </div>
+    </div>
+    <div class="ml-auto ml-sm-0">
+      <span class="forecast-temp-text mr-3">{{day.main.temp | number:'1.0-0'}}&deg;</span>
+      <span class="forecast-temp-text night">{{forecastNights[i].main.temp  | number:'1.0-0'}}&deg;</span>
+      <img src="/assets/ico/weather-conditions/{{day.weather[0].icon}}.svg" alt="Иконка погоды"
+        id="{{weather.fromUnixToDayOfWeek(day.dt)}}" class="forecast-img">
+    </div>
+    <span class="forecast-weather-describe d-none d-sm-block">{{day.weather[0].description}}</span>
   </div>
 </div>
