@@ -13,6 +13,11 @@ export interface Position {
   providedIn: 'root'
 })
 export class GeolocationService {
+  readonly permissionDenied = 1;
+  readonly positionUnavaliable = 2;
+  readonly timeout = 3;
+  errorCode: number;
+  private locationName:string;
   constructor(private weather: WeatherService, private router: Router, private lowerCasePipe: LowerCasePipe) { }
 
   isAvailable(): boolean {
@@ -28,7 +33,11 @@ export class GeolocationService {
 
     navigator.geolocation.getCurrentPosition(
       (position) => this.successPosition(position),
-      (error) => console.error('Geolocation failure: ' + error.message),
+      (error) => {
+        console.error('Geolocation failure: ' + error.message);
+        this.errorCode = error.code;
+        //this.router.navigate(['search']);
+      },
       { timeout: 15000, maximumAge: 600000 }
     );
 
@@ -36,14 +45,18 @@ export class GeolocationService {
   }
 
   successPosition(position) {
-    this.weather.getWeatherData(position.coords).subscribe(
-      (data) => this.weather.saveWeatherData(data),
+    this.errorCode = 0;
+    this.weather.getWeatherDataByPosition(position.coords).subscribe(
+      data => this.weather.saveWeatherData(data),
       () => console.error('Error in retrieving weather data.')
     );
-    this.weather.getForecastData(position.coords).subscribe(
-      (data) => this.weather.saveForecastData(data),
+    this.weather.getForecastDataByPosition(position.coords).subscribe(
+      data => {
+        this.weather.saveForecastData(data);
+        this.locationName = data.city.name;
+      },
       () => console.error('Error in retrieving forecast data.'),
-      () => this.router.navigate([`${this.lowerCasePipe.transform(this.weather.weatherDataStorage.name)}`])
+      () => this.router.navigate([`${this.lowerCasePipe.transform(this.locationName)}`])
     );
   }
 

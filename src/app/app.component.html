@@ -1,7 +1,21 @@
-<header></header>
-<main>
-    <div class="container-fluid">
-        <router-outlet></router-outlet>
-    </div>
+<header>
+    <nav class="navbar fixed-top navbar-expand-sm navbar-light bg-light">
+        <span class="navbar-brand mb-0 h1">Weather App</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler"
+            aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggler">
+            <div class="form-inline ml-auto">
+                <input id="input-location" class="form-control mr-2" type="search" placeholder="Город"
+                    aria-label="Search" [formControl]="nameLocation">
+                <button class="btn btn-info my-0" type="button" (click)="search(nameLocation.value)"
+                    [disabled]="!nameLocation.value">Поиск</button>
+            </div>
+        </div>
+    </nav>
+</header>
+<main id="main-content" class="container-fluid">
+    <router-outlet></router-outlet>
 </main>
 <footer></footer>

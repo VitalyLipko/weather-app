@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
+import { Observable, throwError, Subject, BehaviorSubject, ReplaySubject } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
 import { Position } from './geolocation.service';
 
-const API_KEY = 'f25ad0c5cec3176c83ad8d9daddb8fe2';
+const apiKey = 'f25ad0c5cec3176c83ad8d9daddb8fe2';
 
 export interface WeatherData {
   coord: Coord;
@@ -99,33 +99,50 @@ interface Sys {
   sunset: number;
 }
 
-interface UrlAPI {
-  weather: string;
-  forecast: string;
+interface UrlApi {
+  readonly weather: string;
+  readonly forecast: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class WeatherService {
-  private urlAPI: UrlAPI = {
+  private urlApi: UrlApi = {
     weather: 'https://api.openweathermap.org/data/2.5/weather?',
     forecast: 'https://api.openweathermap.org/data/2.5/forecast?'
   }
-  weatherDataStorage: WeatherData;
-  forecastDataStorage: ForecastData;
+
+  private weatherDataStorage = new ReplaySubject<WeatherData>(1);
+  private forecastDataStorage = new ReplaySubject<ForecastData>(1);
+  weatherDataStorage$ = this.weatherDataStorage.asObservable();
+  forecastDataStorage$ = this.forecastDataStorage.asObservable();
+  errorStatus: number;
+
   constructor(private http: HttpClient) { }
 
-  getWeatherData(position: Position): Observable<WeatherData> {
+  getWeatherDataByPosition(position: Position): Observable<WeatherData> {
     return this.http.get<WeatherData>(
-      `${this.urlAPI.weather}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${API_KEY}`
-    ).pipe(retry(3), catchError(this.handleError));
+      `${this.urlApi.weather}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${apiKey}`
+    ).pipe(retry(2), catchError(this.handleError));
   }
 
-  getForecastData(position: Position): Observable<ForecastData> {
+  getForecastDataByPosition(position: Position): Observable<ForecastData> {
     return this.http.get<ForecastData>(
-      `${this.urlAPI.forecast}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${API_KEY}`
-    ).pipe(retry(3), catchError(this.handleError));
+      `${this.urlApi.forecast}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${apiKey}`
+    ).pipe(retry(2), catchError(this.handleError));
+  }
+
+  getWeatherDataByName(name: string): Observable<WeatherData> {
+    return this.http.get<WeatherData>(
+      `${this.urlApi.weather}q=${name}&units=metric&lang=ru&appid=${apiKey}`
+    ).pipe(retry(2), catchError(this.handleError));
+  }
+
+  getForecastDataByName(name: string): Observable<ForecastData> {
+    return this.http.get<ForecastData>(
+      `${this.urlApi.forecast}q=${name}&units=metric&lang=ru&appid=${apiKey}`
+    ).pipe(retry(2), catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {
@@ -134,24 +151,17 @@ export class WeatherService {
     } else {
       console.error(`Backend returned code ${error.status} ` + `body was: ${error.error}`);
     }
-    return throwError('Something bad happened; please try again later.');
-  }
-
-  getWeatherDataStorage(): Observable<WeatherData> {
-    return of(this.weatherDataStorage);
-  }
-
-  getForecastDataStorage(): Observable<ForecastData> {
-    return of(this.forecastDataStorage);
+    return throwError(error);
   }
 
   saveWeatherData(data: WeatherData) {
-    this.weatherDataStorage = data;
+    this.weatherDataStorage.next(data);
   }
 
   saveForecastData(data: ForecastData) {
-    this.forecastDataStorage = data;
+    this.forecastDataStorage.next(data);
   }
+  
   //Получаем из списка пятидневного прогноза прогноз на дневные часы
   getForecastDays(forecastList: List[]): List[] {
     let forecastDays: List[] = [];
@@ -177,7 +187,7 @@ export class WeatherService {
     return forecastNight;
   }
 
-  //Получаем прогноз на ближайшие 24 часа
+  //Получаем прогноз на ближайшие 24 часа (интервал 3 часа)
   getForecastDay(forecastList: List[]): List[] {
     let forecastDay: List[] = [];
     let i: number = 0;

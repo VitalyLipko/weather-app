@@ -3,8 +3,11 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { LocationsComponent } from './locations/locations.component';
 import { LocationDetailsComponent } from './location-details/location-details.component';
+import { LocationSearchComponent } from './location-search/location-search.component';
 
 const routes: Routes = [
+  { path: '', redirectTo: '/search', pathMatch: 'full' },
+  { path: 'search', component: LocationSearchComponent },
   { path: 'locations', component: LocationsComponent },
   { path: ':currentLocation', component: LocationDetailsComponent }
 ];

@@ -10,7 +10,7 @@
   <div class="col-md-7 text-center" id="main-block">
     <div id="current-weather" class="d-inline-flex flex-row mb-md-2">
       <span id="current-temp">
-        {{weatherData?.main.temp}}&deg;
+        {{weatherData?.main.temp | number:'1.0-0'}}&deg;
       </span>
       <div id="current-weather-description">
         <img src="/assets/ico/weather-conditions/{{weatherData?.weather[0].icon}}.svg" alt="Иконка погоды"
@@ -69,7 +69,7 @@
     </div>
     <div class="ml-auto ml-sm-0">
       <span class="forecast-temp-text mr-3">{{day.main.temp | number:'1.0-0'}}&deg;</span>
-      <span class="forecast-temp-text night">{{forecastNights[i].main.temp  | number:'1.0-0'}}&deg;</span>
+      <span class="forecast-temp-text night">{{forecastNights[i].main.temp | number:'1.0-0'}}&deg;</span>
       <img src="/assets/ico/weather-conditions/{{day.weather[0].icon}}.svg" alt="Иконка погоды"
         id="{{weather.fromUnixToDayOfWeek(day.dt)}}" class="forecast-img">
     </div>
