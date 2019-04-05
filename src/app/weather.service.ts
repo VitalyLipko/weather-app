@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, Subject, BehaviorSubject, ReplaySubject } from 'rxjs';
+import { Observable, throwError, ReplaySubject } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
 import { Position } from './geolocation.service';
@@ -29,6 +29,11 @@ export interface ForecastData {
   city: City;
   cnt: number;
   list: List[];
+}
+
+export interface GroupWeatherData {
+  cnt: number;
+  list: WeatherData[];
 }
 
 interface City {
@@ -102,6 +107,7 @@ interface Sys {
 interface UrlApi {
   readonly weather: string;
   readonly forecast: string;
+  readonly group: string;
 }
 
 @Injectable({
@@ -110,7 +116,8 @@ interface UrlApi {
 export class WeatherService {
   private urlApi: UrlApi = {
     weather: 'https://api.openweathermap.org/data/2.5/weather?',
-    forecast: 'https://api.openweathermap.org/data/2.5/forecast?'
+    forecast: 'https://api.openweathermap.org/data/2.5/forecast?',
+    group: 'https://api.openweathermap.org/data/2.5/group?'
   }
 
   private weatherDataStorage = new ReplaySubject<WeatherData>(1);
@@ -144,6 +151,13 @@ export class WeatherService {
       `${this.urlApi.forecast}q=${name}&units=metric&lang=ru&appid=${apiKey}`
     ).pipe(retry(2), catchError(this.handleError));
   }
+
+  getGroupWeatherData(idList: string): Observable<GroupWeatherData> {
+    return this.http.get<GroupWeatherData>(
+      `${this.urlApi.group}id=${idList}&units=metric&lang=ru&appid=${apiKey}`
+    ).pipe(retry(1), catchError(this.handleError));
+  }
+
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

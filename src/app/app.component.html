@@ -6,11 +6,19 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarToggler">
-            <div class="form-inline ml-auto">
-                <input id="input-location" class="form-control mr-2" type="search" placeholder="Город"
+            <div class="navbar-nav text-center">
+                <a class="nav-item nav-link" routerLink="/locations" routerLinkActive="active"
+                    [routerLinkActiveOptions]="{exact:true}">Мои места</a>
+            </div>
+            <div id="input-location" class="input-group ml-auto">
+                <input class="form-control" type="search" placeholder="Город"
                     aria-label="Search" [formControl]="nameLocation">
-                <button class="btn btn-info my-0" type="button" (click)="search(nameLocation.value)"
-                    [disabled]="!nameLocation.value">Поиск</button>
+                <div class="input-group-append">
+                    <button class="btn btn-info my-0" type="button" (click)="search(nameLocation.value)"
+                        [disabled]="!nameLocation.value">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </nav>

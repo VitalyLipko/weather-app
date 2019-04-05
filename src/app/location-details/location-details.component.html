@@ -1,7 +1,32 @@
 <div class="row mb-md-5">
+  <div class="col d-flex flex-row justify-content-center pt-2"
+    *ngIf="this.locationManagement.locations && this.locationManagement.isLocationsList()">
+    <div class="location-pagination rounded-circle mr-1"
+      *ngFor="let location of this.locationManagement.locations; let i=index" [class.bg-info]="i===selectedIndex()">
+    </div>
+  </div>
   <div class="col-12 text-center">
-    <span id="loc-name">{{weatherData?.name}}</span> 
-    <span class="d-block">Прогноз: сегодня, 
+    <div id="loc-name">
+      <button type="button" class="btn"
+        *ngIf="this.locationManagement.locations && this.locationManagement.isLocationsList()" (click)="previous()">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button type="button" id="bookmark" class="btn px-0 mr-1"
+        (click)="locationManagement.manage(weatherData)">
+        <ng-container *ngIf="locationManagement.isBookmark; else elseTemplate">
+          &times;
+        </ng-container>
+        <ng-template #elseTemplate>
+          +
+        </ng-template>
+      </button>
+      {{weatherData?.name}}
+      <button type="button" class="btn"
+        *ngIf="this.locationManagement.locations && this.locationManagement.isLocationsList()" (click)="next()">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+    <span class="d-block">Прогноз: сегодня,
       {{weather.fromUnixToDayOfMonth(weatherData?.dt)}}
       {{weather.fromUnixToMonth(weatherData?.dt)}},
       {{weather.fromUnixToHours(weatherData?.dt)}}
@@ -25,12 +50,11 @@
           class="d-block forecast-day-hours-img">
         <span>{{forecastHour.main.temp | number:'1.0-0'}}&deg;</span>
       </div>
-
     </div>
   </div>
   <div class="col-md-5 d-flex flex-column" id="additional-block">
-    <button type="button" class="btn btn-light btn-block d-md-none mb-3" data-toggle="collapse" data-target="#wrapper-param"
-      aria-expanded="false" aria-controls="wrapper-param">
+    <button type="button" class="btn btn-light btn-block d-md-none mb-3" data-toggle="collapse"
+      data-target="#wrapper-param" aria-expanded="false" aria-controls="wrapper-param">
       <i class="fas fa-chevron-down"></i>
     </button>
     <div id="wrapper-param" class="collapse d-md-block">

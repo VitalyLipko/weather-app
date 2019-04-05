@@ -1,3 +1,28 @@
-<p>
-  locations works!
-</p>
+<div class="row d-flex justify-content-md-center pt-2">
+  <ng-container *ngIf="!locationManagement.locations.length; else elseTemplate">
+    <p class="text-center">Список пуст! Добавьте хотя бы одно место с помощью закладки на странице прогноза.</p>
+  </ng-container>
+  <ng-template #elseTemplate>
+    <div class="location col-6 col-md-4 col-lg-3 col-xl-2"
+      *ngFor="let location of locationManagement.locations; let i=index; last as isLast" [class.mr-lg-2]="!isLast">
+      <div class="clearfix">
+        <span class="group-location-name float-left">{{locationManagement.groupWeatherData?.list[i].name}}</span>
+        <button type="button" class="close" aria-label="Close" (click)="locationManagement.delete(location.name)">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="group-current-weather d-inline-flex flex-row mb-md-2"
+        (click)="locationManagement.show(locationManagement.groupWeatherData?.list[i].name)">
+        <span class="group-current-temp">
+          {{locationManagement.groupWeatherData?.list[i].main.temp | number:'1.0-0'}}&deg;
+        </span>
+        <div class="group-current-weather-description">
+          <img src="/assets/ico/weather-conditions/{{locationManagement.groupWeatherData?.list[i].weather[0].icon}}.svg"
+            alt="Иконка погоды" class="group-weather-conditions-ico d-block">
+          <span
+            class="group-weather-condition">{{locationManagement.groupWeatherData?.list[i].weather[0].description}}</span>
+        </div>
+      </div>
+    </div>    
+  </ng-template>
+</div>

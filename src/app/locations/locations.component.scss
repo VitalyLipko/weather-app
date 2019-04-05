@@ -1,0 +1,28 @@
+.location {
+    .group-location-name {
+        font-size: 1.5em;
+    }
+
+    .group-current-temp {
+        font-size: 3.8em;
+    }
+
+    .group-current-weather {
+        .group-weather-conditions-ico {
+            position: relative;
+            top: 0.5em;
+            width: 3.5em;
+        } 
+    
+        .group-weather-condition {
+            position: relative;
+            top: -0.5em;
+            font-size: 1.5em;
+        }
+    }    
+}
+
+.location:hover {
+    box-shadow: 0.3em 0.4em 1.4em -0.4em var(--dark);
+    transition: box-shadow 0.2s ease-in;
+}

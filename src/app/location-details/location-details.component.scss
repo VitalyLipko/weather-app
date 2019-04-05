@@ -1,3 +1,9 @@
+.location-pagination {
+    height: 1em;
+    width: 1em;
+    background-color: var(--light);
+}
+
 #current-temp {
     font-size: 6.2em;
 }
@@ -32,6 +38,10 @@
 
 #loc-name {
     font-size: 2em;
+
+    #bookmark {
+        font-size: 1em;
+    }
 }
 
 #current-weather {
