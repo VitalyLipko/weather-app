@@ -15,7 +15,7 @@ export class LocationsComponent implements OnInit, OnDestroy {
   constructor(public weather: WeatherService, public locationManagement: LocationManagementService) { }
 
   ngOnInit() {
-    if(localStorage.getItem('locations'))
+    if (localStorage.getItem('locations'))
       this.locationManagement.locations = JSON.parse(localStorage.getItem('locations'));
     if (this.locationManagement.locations.length) {
       let idList: string = '';
@@ -24,13 +24,17 @@ export class LocationsComponent implements OnInit, OnDestroy {
           idList += location.id.toString() + ',';
         } else idList += location.id.toString();
       });
-      this.subscriptions.add(this.weather.getGroupWeatherData(idList).subscribe(groupWeatherData =>
-        this.locationManagement.groupWeatherData = groupWeatherData
-      ));
+      this.subscriptions.add(
+        this.weather.getGroupWeatherData(idList).subscribe(groupWeatherData => this.locationManagement.groupWeatherData = groupWeatherData)
+      );
     }
   }
 
   ngOnDestroy() {
     if (this.subscriptions) this.subscriptions.unsubscribe();
+  }
+
+  trackByFn(index, item) {
+    return item.id;
   }
 }

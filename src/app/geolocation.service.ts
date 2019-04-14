@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { LowerCasePipe } from '@angular/common';
+import { switchMap, tap } from 'rxjs/operators';
 
 import { WeatherService } from './weather.service';
+import { TimezoneService } from './timezone.service';
 
 export interface Position {
   latitude: number;
@@ -17,8 +19,9 @@ export class GeolocationService {
   readonly positionUnavaliable = 2;
   readonly timeout = 3;
   errorCode: number;
-  private locationName:string;
-  constructor(private weather: WeatherService, private router: Router, private lowerCasePipe: LowerCasePipe) { }
+
+  constructor(private weather: WeatherService, private router: Router, private lowerCasePipe: LowerCasePipe,
+    private timezone: TimezoneService) { }
 
   isAvailable(): boolean {
     if ('geolocation' in navigator) return true;
@@ -46,18 +49,31 @@ export class GeolocationService {
 
   successPosition(position) {
     this.errorCode = 0;
-    this.weather.getWeatherDataByPosition(position.coords).subscribe(
-      data => this.weather.saveWeatherData(data),
-      () => console.error('Error in retrieving weather data.')
-    );
-    this.weather.getForecastDataByPosition(position.coords).subscribe(
-      data => {
-        this.weather.saveForecastData(data);
-        this.locationName = data.city.name;
-      },
-      () => console.error('Error in retrieving forecast data.'),
-      () => this.router.navigate([`${this.lowerCasePipe.transform(this.locationName)}`])
+    this.weather.getWeatherDataByPosition(position.coords).pipe(
+      tap(
+        weatherData => this.weather.saveWeatherData(weatherData),
+        error => {
+          console.error('Error in retrieving weather data.');
+          this.weather.errorStatus = error.status;
+        }
+      ),
+      switchMap(() => this.weather.getForecastDataByPosition(position.coords).pipe(
+        tap(
+          forecastData => {
+            this.weather.saveForecastData(forecastData);
+            this.router.navigate([`${this.lowerCasePipe.transform(forecastData.city.name)}`])
+          },
+          error => {
+            console.error('Error in retrieving forecast data.');
+            this.weather.errorStatus = error.status;
+            this.router.navigate(['/search']);
+          }
+        ),
+        switchMap((forecastData) => this.timezone.getTimezone(forecastData.city.coord))
+      ))
+    ).subscribe(
+      timezoneData => this.timezone.saveTimezoneDataStorage(timezoneData),
+      () => console.error('Error in retrieving timezone data.')
     );
   }
-
 }

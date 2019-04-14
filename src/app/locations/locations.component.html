@@ -4,7 +4,8 @@
   </ng-container>
   <ng-template #elseTemplate>
     <div class="location col-6 col-md-4 col-lg-3 col-xl-2"
-      *ngFor="let location of locationManagement.locations; let i=index; last as isLast" [class.mr-lg-2]="!isLast">
+      *ngFor="let location of locationManagement.locations; let i=index; last as isLast; trackBy: trackByFn"
+      [class.mr-lg-2]="!isLast">
       <div class="clearfix">
         <span class="group-location-name float-left">{{locationManagement.groupWeatherData?.list[i].name}}</span>
         <button type="button" class="close" aria-label="Close" (click)="locationManagement.delete(location.name)">
@@ -12,7 +13,7 @@
         </button>
       </div>
       <div class="group-current-weather d-inline-flex flex-row mb-md-2"
-        (click)="locationManagement.show(locationManagement.groupWeatherData?.list[i].name)">
+        (click)="locationManagement.getData(locationManagement.groupWeatherData?.list[i].name)">
         <span class="group-current-temp">
           {{locationManagement.groupWeatherData?.list[i].main.temp | number:'1.0-0'}}&deg;
         </span>
@@ -23,6 +24,6 @@
             class="group-weather-condition">{{locationManagement.groupWeatherData?.list[i].weather[0].description}}</span>
         </div>
       </div>
-    </div>    
+    </div>
   </ng-template>
 </div>

@@ -3,12 +3,16 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { LowerCasePipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { registerLocaleData } from '@angular/common';
+import localeRu from '@angular/common/locales/ru';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LocationsComponent } from './locations/locations.component';
 import { LocationDetailsComponent } from './location-details/location-details.component';
 import { LocationSearchComponent } from './location-search/location-search.component';
+
+registerLocaleData(localeRu);
 
 @NgModule({
   declarations: [

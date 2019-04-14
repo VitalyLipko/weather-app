@@ -3,6 +3,5 @@
 }
 
 #main-content {
-    position: absolute;
-    top: 56px;
+    min-height: calc(100vh - 152px);
 }

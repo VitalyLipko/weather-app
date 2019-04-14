@@ -51,10 +51,10 @@ export interface List {
   wind: Wind;
   rain: number;
   snow: number;
-  dt_txt: number;
+  dt_txt: string;
 }
 
-interface Coord {
+export interface Coord {
   lon: number;
   lat: number;
 }
@@ -120,12 +120,12 @@ export class WeatherService {
     group: 'https://api.openweathermap.org/data/2.5/group?'
   }
 
-  private weatherDataStorage = new ReplaySubject<WeatherData>(1);
-  private forecastDataStorage = new ReplaySubject<ForecastData>(1);
+  private weatherDataStorage = new ReplaySubject<WeatherData>(1, 2000);
+  private forecastDataStorage = new ReplaySubject<ForecastData>(1, 2000);
   weatherDataStorage$ = this.weatherDataStorage.asObservable();
   forecastDataStorage$ = this.forecastDataStorage.asObservable();
   errorStatus: number;
-
+  forecastTz: number;
   constructor(private http: HttpClient) { }
 
   getWeatherDataByPosition(position: Position): Observable<WeatherData> {
@@ -175,27 +175,33 @@ export class WeatherService {
   saveForecastData(data: ForecastData) {
     this.forecastDataStorage.next(data);
   }
-  
+
   //Получаем из списка пятидневного прогноза прогноз на дневные часы
-  getForecastDays(forecastList: List[]): List[] {
+  getForecastDays(forecastList: List[], offset: number): List[] {
     let forecastDays: List[] = [];
-    let hours: string;
+    let hours: number;
 
     for (let forecast of forecastList) {
-      hours = this.fromUnixToHours(forecast.dt);
-      if (hours === "12:00" || hours === "13:00" || hours === "14:00") forecastDays.push(forecast);
+      let test = new Date(forecast.dt * 1000);
+      hours = test.getUTCHours() + offset;
+      if (hours < 0) hours += 24;
+      else if (hours > 23) hours -= 24;
+      if (hours === 12 || hours === 13 || hours === 14) forecastDays.push(forecast);
     }
 
     return forecastDays;
   }
   //Получаем из списка пятидневного прогноза прогноз на ночные часы
-  getForecastNight(forecastList: List[]): List[] {
+  getForecastNights(forecastList: List[], offset: number): List[] {
     let forecastNight: List[] = [];
-    let hours: string;
+    let hours: number;
 
     for (let forecast of forecastList) {
-      hours = this.fromUnixToHours(forecast.dt);
-      if (hours === "0:00" || hours === "01:00" || hours === "02:00") forecastNight.push(forecast);
+      let test = new Date(forecast.dt * 1000);
+      hours = test.getUTCHours() + offset;
+      if (hours < 0) hours += 24;
+      else if (hours > 23) hours -= 24;
+      if (hours === 0 || hours === 1 || hours === 2) forecastNight.push(forecast);
     }
 
     return forecastNight;
@@ -206,7 +212,7 @@ export class WeatherService {
     let forecastDay: List[] = [];
     let i: number = 0;
 
-    while(i < 8) {
+    while (i < 8) {
       forecastDay.push(forecastList[i++]);
     }
 
@@ -215,7 +221,7 @@ export class WeatherService {
 
   //Переводим метеорологические градусы (азимут точки, откуда дует ветер) в направление
   fromGradToDir(grad: number): string {
-    if (grad === 0) return "С";
+    if (grad === 0) return "С";//надо указать штиль??
     else if (grad > 0 && grad < 90) return "СВ";
     else if (grad === 90) return "С";
     else if (grad > 90 && grad < 180) return "ЮВ";
@@ -228,39 +234,5 @@ export class WeatherService {
   //Переводим значение атмосферного давления из гПа в мм.рт.ст.
   fromPaToHg(pressure: number): number {
     return (pressure * 0.75006)//0.75006 - эквивалент 1 гПа в мм.рт.ст.
-  }
-
-  //Переводим UNIX-время в часы и минуты
-  fromUnixToHours(unix: number): string {
-    let date = new Date(unix * 1000);//unix-время дано в секундах, поэтому приводим к миллисекундам
-    let hours: string, minutes: string;
-
-    if (date.getHours() < 10) hours = '0' + date.getHours().toString();
-    else hours = date.getHours().toString();
-    if (date.getMinutes() < 10) minutes = '0' + date.getMinutes().toString();
-    else minutes = date.getMinutes().toString();
-
-    return (hours + ':' + minutes);
-  }
-  //Переводим UNIX-время в день недели
-  fromUnixToDayOfWeek(unix: number): string {
-    let daysOfWeek: string[] = ['вск', 'пн', 'вт', 'ср', 'чт', 'пт', 'cб'];
-    let date = new Date(unix * 1000);
-
-    return daysOfWeek[date.getDay()];
-  }
-  //Переводим UNIX-время в месяц
-  fromUnixToMonth(unix: number): string {
-    let months: string[] = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа',
-      'сентября', 'октября', 'ноября', 'декабря'];
-    let date = new Date(unix * 1000);
-
-    return months[date.getMonth()];
-  }
-  //Переводим UNIX-время в день месяца
-  fromUnixToDayOfMonth(unix: number): number {
-    let date = new Date(unix * 1000);
-
-    return date.getDate();
   }
 }

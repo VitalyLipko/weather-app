@@ -1,6 +1,8 @@
+@import 'src/app-variables';
+
 .location-pagination {
-    height: 1em;
-    width: 1em;
+    height: 0.5em;
+    width: 0.5em;
     background-color: var(--light);
 }
 
@@ -58,12 +60,20 @@
     }
 }
 
+#forecast-title {
+    font-size: 2em;
+}
+
 .forecast-temp-text {
     font-size: 2.5em;
 }
 
 .night {
-    color: var(--gray);
+    color: $lightblue;
+}
+
+.selected {
+    background-color: $lightblue;
 }
 
 .forecast-img, .forecast-weather-describe {

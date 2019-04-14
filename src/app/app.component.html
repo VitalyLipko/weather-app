@@ -1,5 +1,5 @@
-<header>
-    <nav class="navbar fixed-top navbar-expand-sm navbar-light bg-light">
+<header class="fixed-top">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
         <span class="navbar-brand mb-0 h1">Weather App</span>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler"
             aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
@@ -11,11 +11,17 @@
                     [routerLinkActiveOptions]="{exact:true}">Мои места</a>
             </div>
             <div id="input-location" class="input-group ml-auto">
-                <input class="form-control" type="search" placeholder="Город"
+                <div class="input-group-prepend">
+                    <button class="btn btn-custom" type="button" [disabled]="!this.geolocation.isAvailable()"
+                        (click)="this.geolocation.getCurrentPosition()">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </button>
+                </div>
+                <input class="form-control" type="search" placeholder="Город" (keyup.enter)="searchByEnter()"
                     aria-label="Search" [formControl]="nameLocation">
                 <div class="input-group-append">
-                    <button class="btn btn-info my-0" type="button" (click)="search(nameLocation.value)"
-                        [disabled]="!nameLocation.value">
+                    <button class="btn btn-custom" type="button" (click)="search(nameLocation.value)"
+                        [disabled]="!nameLocation.valid">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
@@ -26,4 +32,10 @@
 <main id="main-content" class="container-fluid">
     <router-outlet></router-outlet>
 </main>
-<footer></footer>
+<footer class="p-sm-4 py-4 text-center">
+    <div>
+        <span>Источник данных: </span>
+        <a class="text-light" href="https://openweathermap.org" target="_blank" rel="noopener">Openweathermap</a>
+    </div>
+    <span>© Weather App, 2019</span>
+</footer>
