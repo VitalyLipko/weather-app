@@ -5,6 +5,7 @@ import { switchMap, tap } from 'rxjs/operators';
 
 import { WeatherService } from './weather.service';
 import { TimezoneService } from './timezone.service';
+import { ReplaySubject } from 'rxjs';
 
 export interface Position {
   latitude: number;
@@ -18,10 +19,19 @@ export class GeolocationService {
   readonly permissionDenied = 1;
   readonly positionUnavaliable = 2;
   readonly timeout = 3;
-  errorCode: number;
+  private _errorCode = new ReplaySubject<number>(1, 2000);
+  errorCode$ = this._errorCode.asObservable();
+  isUsed: boolean = false;
+  constructor(
+    private weather: WeatherService,
+    private router: Router,
+    private lowerCasePipe: LowerCasePipe,
+    private timezone: TimezoneService
+  ) { }
 
-  constructor(private weather: WeatherService, private router: Router, private lowerCasePipe: LowerCasePipe,
-    private timezone: TimezoneService) { }
+  set errorCode(code: number) {
+    this._errorCode.next(code);
+  }
 
   isAvailable(): boolean {
     if ('geolocation' in navigator) return true;
@@ -34,12 +44,12 @@ export class GeolocationService {
       longitude: 0
     };
 
+    if (!this.isUsed) this.isUsed = true;
     navigator.geolocation.getCurrentPosition(
       (position) => this.successPosition(position),
       (error) => {
         console.error('Geolocation failure: ' + error.message);
         this.errorCode = error.code;
-        //this.router.navigate(['search']);
       },
       { timeout: 15000, maximumAge: 600000 }
     );
@@ -49,6 +59,7 @@ export class GeolocationService {
 
   successPosition(position) {
     this.errorCode = 0;
+    this.weather.isDataLoaded = false;
     this.weather.getWeatherDataByPosition(position.coords).pipe(
       tap(
         weatherData => this.weather.saveWeatherData(weatherData),

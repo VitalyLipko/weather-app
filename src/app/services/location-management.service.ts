@@ -18,17 +18,22 @@ export class LocationManagementService {
   isBookmark: boolean;
   locations: Locations[] = [];
   groupWeatherData: GroupWeatherData;
-  constructor(private weather: WeatherService, private router: Router, private lowerCasePipe: LowerCasePipe,
-    private timezone: TimezoneService) { }
+
+  constructor(
+    private weather: WeatherService,
+    private router: Router,
+    private lowerCasePipe: LowerCasePipe,
+    private timezone: TimezoneService
+  ) { }
 
   isLocationExist(name: string): boolean {
     if (this.locations.find(location => location.name === name)) return true;
-    else return false;
+    return false;
   }
 
-  isLocationsList(): boolean {
-    if (this.router.url.substr(0, 10) === '/locations') return true;
-    else return false;
+  enablePagination(): boolean {
+    if (this.router.url.substr(0, 10) === '/locations' && this.locations.length > 1) return true;
+    return false;
   }
 
   manage(weatherData: WeatherData) {
@@ -61,6 +66,8 @@ export class LocationManagementService {
   }
 
   getData(name: string) {
+    if (!name) return;
+    this.weather.isDataLoaded = false;
     this.weather.getWeatherDataByName(name).pipe(
       tap(
         weatherData => this.weather.saveWeatherData(weatherData),
@@ -74,7 +81,7 @@ export class LocationManagementService {
         tap(
           forecastData => {
             this.weather.saveForecastData(forecastData);
-            if(this.router.url.substr(1, 9) === 'locations')
+            if (this.router.url.substr(1, 9) === 'locations')
               this.router.navigate([`/locations/${this.lowerCasePipe.transform(forecastData.city.name)}`]);
             else this.router.navigate([`${this.lowerCasePipe.transform(forecastData.city.name)}`]);
           },
@@ -92,6 +99,7 @@ export class LocationManagementService {
   }
 
   delete(name: string) {
+    if (!name) return;
     if (this.locations.length == 1) {
       this.locations = [];
       localStorage.removeItem('locations');

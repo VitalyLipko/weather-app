@@ -1,7 +1,27 @@
-#input-location {
-    width: 230px;
-}
+@import 'src/app-variables';
 
 #main-content {
     min-height: calc(100vh - 152px);
+}
+
+#input {
+    border-radius: 19px 0 0 19px;
+}
+
+#btn-search {
+    border-radius: 0 19px 19px 0;
+}
+
+.nav-item.nav-link.active {
+    background-color: $lightblue;
+    color: var(--dark);
+}
+
+.nav-item.nav-link:hover:not(.active) {
+    background-color: $lightblue;
+    transition: background-color 0.2s ease;
+}
+
+.navbar-shadow {
+    box-shadow: 0 0.1em 0.5em var(--dark);
 }

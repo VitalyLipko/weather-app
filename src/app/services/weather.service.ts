@@ -124,9 +124,20 @@ export class WeatherService {
   private forecastDataStorage = new ReplaySubject<ForecastData>(1, 2000);
   weatherDataStorage$ = this.weatherDataStorage.asObservable();
   forecastDataStorage$ = this.forecastDataStorage.asObservable();
-  errorStatus: number;
+  private _errorStatus = new ReplaySubject<number>(1, 2000);
+  errorStatus$ = this._errorStatus.asObservable();
   forecastTz: number;
+  private _isDataLoaded = new ReplaySubject<boolean>(1, 2000);
+  isDataLoaded$ = this._isDataLoaded.asObservable();
   constructor(private http: HttpClient) { }
+
+  set isDataLoaded(state: boolean) {
+    this._isDataLoaded.next(state);
+  }
+
+  set errorStatus(status: number) {
+    this._errorStatus.next(status);
+  }
 
   getWeatherDataByPosition(position: Position): Observable<WeatherData> {
     return this.http.get<WeatherData>(
@@ -163,7 +174,7 @@ export class WeatherService {
     if (error.error instanceof ErrorEvent) {
       console.error('An error occurred: ', error.error.message);
     } else {
-      console.error(`Backend returned code ${error.status} ` + `body was: ${error.error}`);
+      console.error(`Openweathermap API returned code ${error.status} ` + `body was: ${error.error}`);
     }
     return throwError(error);
   }
@@ -221,7 +232,7 @@ export class WeatherService {
 
   //Переводим метеорологические градусы (азимут точки, откуда дует ветер) в направление
   fromGradToDir(grad: number): string {
-    if (grad === 0) return "С";//надо указать штиль??
+    if (grad === 0 || grad === 360) return "С";
     else if (grad > 0 && grad < 90) return "СВ";
     else if (grad === 90) return "С";
     else if (grad > 90 && grad < 180) return "ЮВ";

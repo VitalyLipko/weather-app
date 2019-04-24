@@ -1,0 +1,15 @@
+<div id="forecast-title" class="col-12 pl-5"><span class="ml-xl-5">На ближайшие дни</span></div>
+<div class="col-sm-6 col-md-4 col-lg-3 col-xl-2 text-center d-flex flex-row flex-sm-column mb-sm-3"
+  *ngFor="let day of forecastDays; let i=index" [class.offset-xl-1]="i==0">
+  <div class="pt-3 pt-sm-0">
+    <span>{{day.dt*1000 | date:'EEEEEE':timezoneOffset:'ru'}}</span>
+    <div><span>{{day.dt*1000 | date:'d MMMM':timezoneOffset:'ru'}}</span></div>
+  </div>
+  <div class="ml-auto ml-sm-0">
+    <span class="forecast-temp-text mr-3">{{day.main.temp | number:'1.0-0'}}&deg;</span>
+    <span class="forecast-temp-text night">{{forecastNights[i].main.temp | number:'1.0-0'}}&deg;</span>
+    <img src="assets/ico/weather-conditions/{{day.weather[0].icon}}.svg" alt="Иконка погоды"
+      id="{{day.dt*1000 | date:'EEEEEE':timezoneOffset:'ru'}}" class="forecast-img">
+  </div>
+  <span class="forecast-weather-describe d-none d-sm-block">{{day.weather[0].description}}</span>
+</div>

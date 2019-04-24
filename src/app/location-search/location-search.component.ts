@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 
-import { GeolocationService } from '../geolocation.service';
-import { WeatherService } from '../weather.service';
-
+import { GeolocationService } from '../services/geolocation.service';
+import { WeatherService } from '../services/weather.service';
+import { TagService } from '../services/tag.service';
 
 @Component({
   selector: 'app-location-search',
@@ -10,12 +11,25 @@ import { WeatherService } from '../weather.service';
   styleUrls: ['./location-search.component.scss']
 })
 export class LocationSearchComponent implements OnInit {
-  constructor(public geolocation: GeolocationService, public weather: WeatherService) { }
+  errorStatus$: Observable<number>;
+  errorCode$: Observable<number>;
+  constructor(
+    public geolocation: GeolocationService,
+    private weather: WeatherService,
+    private seo: TagService
+  ) { }
 
   ngOnInit() {
+    this.seo.setPageTitle('Weather App | Страница поиска');
+    this.seo.setPageDescription('');
+    this.seo.setMetaRobots('noindex, nofollow');
+    this.errorStatus$ = this.weather.errorStatus$;
     if (this.geolocation.isAvailable()) {
       console.log('Geolocation is available');
-      this.geolocation.getCurrentPosition();
+      if (!this.geolocation.isUsed) {
+        this.geolocation.getCurrentPosition();
+        this.errorCode$ = this.geolocation.errorCode$;
+      }
     } else console.warn('Geolocation is unavailable');
   }
 }
