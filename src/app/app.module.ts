@@ -6,6 +6,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ServiceWorkerModule } from '@angular/service-worker';
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +17,7 @@ import { LocationSearchComponent } from './location-search/location-search.compo
 import { Page404Component } from './page404/page404.component';
 import { WeatherComponent } from './location-details-components/weather/weather.component';
 import { ForecastComponent } from './location-details-components/forecast/forecast.component';
+import { environment } from '../environments/environment';
 
 registerLocaleData(localeRu);
 
@@ -33,7 +36,8 @@ registerLocaleData(localeRu);
     HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [LowerCasePipe],
   bootstrap: [AppComponent]

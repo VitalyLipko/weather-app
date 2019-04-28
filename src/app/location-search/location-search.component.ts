@@ -22,14 +22,8 @@ export class LocationSearchComponent implements OnInit {
   ngOnInit() {
     this.seo.setPageTitle('Weather App | Страница поиска');
     this.seo.setPageDescription('');
-    this.seo.setMetaRobots('noindex, nofollow');
+    this.seo.setMetaRobots('index, follow');
     this.errorStatus$ = this.weather.errorStatus$;
-    if (this.geolocation.isAvailable()) {
-      console.log('Geolocation is available');
-      if (!this.geolocation.isUsed) {
-        this.geolocation.getCurrentPosition();
-        this.errorCode$ = this.geolocation.errorCode$;
-      }
-    } else console.warn('Geolocation is unavailable');
+    this.errorCode$ = this.geolocation.errorCode$;
   }
 }

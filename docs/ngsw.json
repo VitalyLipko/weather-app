@@ -1,0 +1,120 @@
+{
+  "configVersion": 1,
+  "timestamp": 1556430143671,
+  "index": "/weather-app/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "urls": [
+        "/weather-app/es2015-polyfills.js",
+        "/weather-app/favicon.ico",
+        "/weather-app/index.html",
+        "/weather-app/main.js",
+        "/weather-app/polyfills.js",
+        "/weather-app/runtime.js",
+        "/weather-app/styles.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "urls": [
+        "/weather-app/assets/ico/parameters/humidity.svg",
+        "/weather-app/assets/ico/parameters/pressure.svg",
+        "/weather-app/assets/ico/parameters/sunrise.svg",
+        "/weather-app/assets/ico/parameters/sunset.svg",
+        "/weather-app/assets/ico/parameters/wind.svg",
+        "/weather-app/assets/ico/weather-conditions/01d.svg",
+        "/weather-app/assets/ico/weather-conditions/01n.svg",
+        "/weather-app/assets/ico/weather-conditions/02d.svg",
+        "/weather-app/assets/ico/weather-conditions/02n.svg",
+        "/weather-app/assets/ico/weather-conditions/03d.svg",
+        "/weather-app/assets/ico/weather-conditions/03n.svg",
+        "/weather-app/assets/ico/weather-conditions/04d.svg",
+        "/weather-app/assets/ico/weather-conditions/04n.svg",
+        "/weather-app/assets/ico/weather-conditions/09d.svg",
+        "/weather-app/assets/ico/weather-conditions/09n.svg",
+        "/weather-app/assets/ico/weather-conditions/10d.svg",
+        "/weather-app/assets/ico/weather-conditions/10n.svg",
+        "/weather-app/assets/ico/weather-conditions/11d.svg",
+        "/weather-app/assets/ico/weather-conditions/11n.svg",
+        "/weather-app/assets/ico/weather-conditions/13d.svg",
+        "/weather-app/assets/ico/weather-conditions/13n.svg",
+        "/weather-app/assets/ico/weather-conditions/50d.svg",
+        "/weather-app/assets/ico/weather-conditions/50n.svg",
+        "/weather-app/assets/icons/icon-192x192.png",
+        "/weather-app/assets/icons/icon-512x512.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "data",
+      "patterns": [
+        "\\/.*"
+      ],
+      "strategy": "freshness",
+      "maxSize": 50,
+      "maxAge": 10800000,
+      "timeoutMs": 10000,
+      "version": 1
+    }
+  ],
+  "hashTable": {
+    "/weather-app/assets/ico/parameters/humidity.svg": "ae75e3b8e7ce2dc78e1e0ab52cc3345ca17b6ee2",
+    "/weather-app/assets/ico/parameters/pressure.svg": "3b4deb0a2017ec0f26e1e366c4082f2597e391b7",
+    "/weather-app/assets/ico/parameters/sunrise.svg": "d4fe91d134a64e5c0e198aa276dd03f5193159a1",
+    "/weather-app/assets/ico/parameters/sunset.svg": "a3e33552d18b474fe299f3e0e03fcf19a5c6f23c",
+    "/weather-app/assets/ico/parameters/wind.svg": "f59c47afde0ff788ec3561deb633752b6dcd8585",
+    "/weather-app/assets/ico/weather-conditions/01d.svg": "3767c61bf90ce8016f52e68154d09557d78f6aef",
+    "/weather-app/assets/ico/weather-conditions/01n.svg": "95415ee46ced083f9d2574a39e2631b541cf4240",
+    "/weather-app/assets/ico/weather-conditions/02d.svg": "8490d9310a91857b2a766ed528b63a30563b51d9",
+    "/weather-app/assets/ico/weather-conditions/02n.svg": "ca479216c05a7b34273c6d9760f31290c437e7b5",
+    "/weather-app/assets/ico/weather-conditions/03d.svg": "be461e53ebe746d39aee0497315ee47138aeb9aa",
+    "/weather-app/assets/ico/weather-conditions/03n.svg": "be461e53ebe746d39aee0497315ee47138aeb9aa",
+    "/weather-app/assets/ico/weather-conditions/04d.svg": "be461e53ebe746d39aee0497315ee47138aeb9aa",
+    "/weather-app/assets/ico/weather-conditions/04n.svg": "be461e53ebe746d39aee0497315ee47138aeb9aa",
+    "/weather-app/assets/ico/weather-conditions/09d.svg": "bf852c7d352ea430ca84d82a1a2399d527b37d01",
+    "/weather-app/assets/ico/weather-conditions/09n.svg": "bf852c7d352ea430ca84d82a1a2399d527b37d01",
+    "/weather-app/assets/ico/weather-conditions/10d.svg": "88fd27d40b5adca4ceeaaaa6471cf5fd0ab1ff29",
+    "/weather-app/assets/ico/weather-conditions/10n.svg": "1ef12b035f45bfdee2e8b9101c8df2a2ba94111c",
+    "/weather-app/assets/ico/weather-conditions/11d.svg": "95a1eaea98891d2ee8dc767d2add7615d9fdca77",
+    "/weather-app/assets/ico/weather-conditions/11n.svg": "95a1eaea98891d2ee8dc767d2add7615d9fdca77",
+    "/weather-app/assets/ico/weather-conditions/13d.svg": "7716e0d30b358b36436c4d6539030cbf22d95242",
+    "/weather-app/assets/ico/weather-conditions/13n.svg": "7716e0d30b358b36436c4d6539030cbf22d95242",
+    "/weather-app/assets/ico/weather-conditions/50d.svg": "226ffcc9decaf59a7a706fe0732f60446813f2bf",
+    "/weather-app/assets/ico/weather-conditions/50n.svg": "226ffcc9decaf59a7a706fe0732f60446813f2bf",
+    "/weather-app/assets/icons/icon-192x192.png": "fa827eb7c7f44c8bf667bf550687296cdf5268d2",
+    "/weather-app/assets/icons/icon-512x512.png": "a2f829035c29258608b249554b5335beae02cdc6",
+    "/weather-app/es2015-polyfills.js": "b7a81c61d32b0b12737f0c13f45973ba391cd7f9",
+    "/weather-app/favicon.ico": "d0c65740d855d13aa007246d2c53c05abb4f8b8f",
+    "/weather-app/index.html": "c926cd3edd1cdbc25944433fb61898db7eb88f45",
+    "/weather-app/main.js": "fc610fa4e37ba6d98d112cd99689652a025cc718",
+    "/weather-app/polyfills.js": "2cf5115e17552ef0ee5167674ea21962877f540c",
+    "/weather-app/runtime.js": "b62956c2192bfe5516d6374e753773901ed50ec5",
+    "/weather-app/styles.css": "3b5e148b66e77444c0cb8180268186303c53e8cb"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ]
+}

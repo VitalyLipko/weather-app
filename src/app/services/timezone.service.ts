@@ -18,7 +18,7 @@ export interface TimezoneData {
   providedIn: 'root'
 })
 export class TimezoneService {
-  private readonly urlApi: string = 'http://api.timezonedb.com/v2.1/get-time-zone?';
+  private readonly urlApi: string = 'https://api.timezonedb.com/v2.1/get-time-zone?';
   private timezoneDataStorage = new ReplaySubject<TimezoneData>(1, 2000);
   timezoneDataStorage$ = this.timezoneDataStorage.asObservable();
 

@@ -8,7 +8,7 @@
       [class.mr-lg-2]="!isLast" [class.ghost-item]="!location">
       <div class="clearfix">
         <div class="group-location-name float-left name">{{location?.name}}</div>
-        <button type="button" class="close" aria-label="Close" (click)="locationManagement.delete(location?.name)">
+        <button type="button" class="close" aria-label="Delete" (click)="locationManagement.delete(location?.name)">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>

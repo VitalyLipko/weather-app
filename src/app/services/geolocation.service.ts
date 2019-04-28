@@ -21,7 +21,7 @@ export class GeolocationService {
   readonly timeout = 3;
   private _errorCode = new ReplaySubject<number>(1, 2000);
   errorCode$ = this._errorCode.asObservable();
-  isUsed: boolean = false;
+
   constructor(
     private weather: WeatherService,
     private router: Router,
@@ -38,23 +38,16 @@ export class GeolocationService {
     return false;
   }
 
-  getCurrentPosition(): Position {
-    let pos: Position = {
-      latitude: 0,
-      longitude: 0
-    };
-
-    if (!this.isUsed) this.isUsed = true;
+  getCurrentPosition() {
     navigator.geolocation.getCurrentPosition(
       (position) => this.successPosition(position),
       (error) => {
         console.error('Geolocation failure: ' + error.message);
         this.errorCode = error.code;
+        this.router.navigate(['/search']);
       },
       { timeout: 15000, maximumAge: 600000 }
     );
-
-    return pos;
   }
 
   successPosition(position) {

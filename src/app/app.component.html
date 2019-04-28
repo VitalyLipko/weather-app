@@ -14,11 +14,11 @@
                     (keyup.enter)="searchByEnter()" (focus)="expandCollapse()" (blur)="expandCollapse()"
                     aria-label="Search" [formControl]="nameLocation" #inputRef>
                 <div class="input-group-append">
-                    <button id="btn-search" class="btn btn-custom mr-2" type="button" [disabled]="!nameLocation.valid"
-                        (click)="search()">
+                    <button id="btn-search" class="btn btn-custom mr-2" type="button" aria-label="Search by location"
+                        [disabled]="!nameLocation.valid" (click)="search()">
                         <i class="fas fa-search"></i>
                     </button>
-                    <button class="btn btn-custom rounded-circle" type="button"
+                    <button class="btn btn-custom rounded-circle" type="button" aria-label="Search by "
                         [disabled]="!this.geolocation.isAvailable()" (click)="this.geolocation.getCurrentPosition()">
                         <i class="fas fa-map-marker-alt"></i>
                     </button>
