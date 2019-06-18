@@ -6,14 +6,14 @@ import { WeatherService, WeatherData, ForecastData, List } from '../../services/
 import { LocationManagementService } from '../../services/location-management.service';
 import { TimezoneService, TimezoneData } from '../../services/timezone.service';
 import { TagService } from 'src/app/services/tag.service';
-import { bookmarkAnimation, notifyAnimation } from 'src/app/animations';
+import { bookmarkAnimation, notifyAnimation, notificationCenterAnimation } from 'src/app/animations';
 
 
 @Component({
   selector: 'app-location-details',
   templateUrl: './location-details.component.html',
   styleUrls: ['./location-details.component.scss'],
-  animations: [bookmarkAnimation, notifyAnimation]
+  animations: [bookmarkAnimation, notifyAnimation, notificationCenterAnimation]
 })
 export class LocationDetailsComponent implements OnInit, OnDestroy {
   weatherData: WeatherData;
@@ -28,7 +28,10 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   timezoneData$: Observable<TimezoneData>;
   isDataLoaded$: Observable<boolean>;
   isShown: boolean = false;
+  isOpenedNotificationCenter: boolean = false;
+  ringing: boolean;
   private timerIdNotify;
+
   @HostListener('window:load') getNewData() {
     this.locationManagement.getData(sessionStorage.getItem('name'));
   }
@@ -86,6 +89,7 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
     if (i !== (this.locationManagement.locations.length - 1))
       this.locationManagement.getData(this.locationManagement.locations[++i].name);
     else this.locationManagement.getData(this.locationManagement.locations[0].name);
+    this.isOpenedNotificationCenter = false;
   }
 
   previous() {
@@ -94,6 +98,7 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
     if (i === 0)
       this.locationManagement.getData(this.locationManagement.locations[this.locationManagement.locations.length - 1].name);
     else this.locationManagement.getData(this.locationManagement.locations[--i].name);
+    this.isOpenedNotificationCenter = false;
   }
 
   selectedIndex(): number {
@@ -113,5 +118,9 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   closeNotify() {
     this.isShown = false;
     clearTimeout(this.timerIdNotify);
+  }
+
+  onClick() {
+     this.isOpenedNotificationCenter = !this.isOpenedNotificationCenter;
   }
 }

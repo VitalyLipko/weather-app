@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1556430143671,
+  "timestamp": 1560872361716,
   "index": "/weather-app/index.html",
   "assetGroups": [
     {
@@ -8,12 +8,14 @@
       "installMode": "prefetch",
       "updateMode": "prefetch",
       "urls": [
-        "/weather-app/es2015-polyfills.js",
         "/weather-app/favicon.ico",
         "/weather-app/index.html",
-        "/weather-app/main.js",
-        "/weather-app/polyfills.js",
-        "/weather-app/runtime.js",
+        "/weather-app/main-es2015.js",
+        "/weather-app/main-es5.js",
+        "/weather-app/polyfills-es2015.js",
+        "/weather-app/polyfills-es5.js",
+        "/weather-app/runtime-es2015.js",
+        "/weather-app/runtime-es5.js",
         "/weather-app/styles.css"
       ],
       "patterns": []
@@ -91,13 +93,15 @@
     "/weather-app/assets/ico/weather-conditions/50n.svg": "226ffcc9decaf59a7a706fe0732f60446813f2bf",
     "/weather-app/assets/icons/icon-192x192.png": "fa827eb7c7f44c8bf667bf550687296cdf5268d2",
     "/weather-app/assets/icons/icon-512x512.png": "a2f829035c29258608b249554b5335beae02cdc6",
-    "/weather-app/es2015-polyfills.js": "b7a81c61d32b0b12737f0c13f45973ba391cd7f9",
     "/weather-app/favicon.ico": "d0c65740d855d13aa007246d2c53c05abb4f8b8f",
-    "/weather-app/index.html": "c926cd3edd1cdbc25944433fb61898db7eb88f45",
-    "/weather-app/main.js": "fc610fa4e37ba6d98d112cd99689652a025cc718",
-    "/weather-app/polyfills.js": "2cf5115e17552ef0ee5167674ea21962877f540c",
-    "/weather-app/runtime.js": "b62956c2192bfe5516d6374e753773901ed50ec5",
-    "/weather-app/styles.css": "3b5e148b66e77444c0cb8180268186303c53e8cb"
+    "/weather-app/index.html": "8fe680a6608e684dc8ade4bf5423c4c6aa839a4b",
+    "/weather-app/main-es2015.js": "fd987cc274288ff8218b3418fba211a5ce86e77b",
+    "/weather-app/main-es5.js": "67e158d2ceb16c41b746c72e715aefd136e5ac99",
+    "/weather-app/polyfills-es2015.js": "0167eabb21353458ceb22b8230f3a2e6384bfbaa",
+    "/weather-app/polyfills-es5.js": "6fc0853ae750029fef5a42310313615eba7fbef7",
+    "/weather-app/runtime-es2015.js": "b62956c2192bfe5516d6374e753773901ed50ec5",
+    "/weather-app/runtime-es5.js": "b62956c2192bfe5516d6374e753773901ed50ec5",
+    "/weather-app/styles.css": "402e7152e7b057057a25ad511d477908d8e47207"
   },
   "navigationUrls": [
     {

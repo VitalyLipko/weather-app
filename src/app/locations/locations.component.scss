@@ -1,77 +1,77 @@
 @import 'src/app-variables';
 
 .location {
-    .group-location-name {
-        font-size: 1.5em;
+  &-name {
+    font-size: 1.5em;
+  }
+
+  &-current-temp {
+    font-size: 3.8em;
+  }
+
+  &-current-weather {
+    .conditions-ico {
+      position: relative;
+      top: 0.5em;
+      width: 3.5em;
+    } 
+
+    .condition {
+      position: relative;
+      top: -0.5em;
+      font-size: 1.5em;
     }
-
-    .group-current-temp {
-        font-size: 3.8em;
-    }
-
-    .group-current-weather {
-        .group-weather-conditions-ico {
-            position: relative;
-            top: 0.5em;
-            width: 3.5em;
-        } 
-    
-        .group-weather-condition {
-            position: relative;
-            top: -0.5em;
-            font-size: 1.5em;
-        }
-    }    
-}
-
-.location:hover:not(.ghost-item) {
+  }
+  
+  &:hover:not(.ghost-item) {
     box-shadow: 0.3em 0.4em 1.4em -0.4em var(--dark);
     transition: box-shadow 0.2s ease-in;
+  }    
 }
 
 @keyframes ghost-lines {
-    0% { background-position: -100px; }
-    40% { background-position: 50px; }
-    100% { background-position: 100px; }
+  0% { background-position: -100px; }
+  40% { background-position: 50px; }
+  100% { background-position: 100px; }
 }
 
 @mixin animate-ghost-line($width) {
-    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba($lightblue, 0.66) $width/2, rgba(255, 255, 255, 0)  $width);
-    animation: ghost-lines 1000ms infinite linear;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba($lightblue, 0.66) $width/2, rgba(255, 255, 255, 0)  $width);
+  animation: ghost-lines 1000ms infinite linear;
 }
 
 .ghost-item {
-    .name {
-        position: relative;
-        top: 5px;
-        height: 20px;
-        width: 136px;
-        @include animate-ghost-line(136px);
-    }
+  .name {
+    position: relative;
+    top: 5px;
+    height: 20px;
+    width: 136px;
+    @include animate-ghost-line(136px);
+  }
 
-    .temp {
-        position: relative;
-        top: 15px;
-        height: 75px;
-        width: 80px;
-        @include animate-ghost-line(80px);
-    }
+  .temp {
+    position: relative;
+    top: 15px;
+    height: 75px;
+    width: 80px;
+    @include animate-ghost-line(80px);
+  }
 
-    .icon {
-        position: relative;
-        top: 15px;
-        left: 15px;
-        height: 40px;
-        width: 40px;
-        @include animate-ghost-line(40px); 
-    }
+  .icon {
+    position: relative;
+    top: 15px;
+    left: 15px;
+    height: 40px;
+    width: 40px;
+    @include animate-ghost-line(40px); 
+  }
 
-    .description {
-        position: relative;
-        top: 30px;
-        left: 15px;
-        height: 20px;
-        width: 100px;
-        @include animate-ghost-line(100px); 
-    }
+  .description {
+    position: relative;
+    top: 30px;
+    left: 15px;
+    height: 20px;
+    width: 100px;
+    @include animate-ghost-line(100px); 
+  }
 }

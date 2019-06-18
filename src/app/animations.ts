@@ -48,3 +48,16 @@ export const notifyAnimation = trigger(
         ])
     ]
 );
+
+export const notificationCenterAnimation = trigger(
+    'openCloseAnimation', [
+        state('open', style({ left: 0 })),
+        state('close', style({ left: '-360px' })),
+        transition('close => open', [
+            animate(animatePreset1)
+        ]),
+        transition('open => close', [
+            animate(animatePreset2)
+        ])
+    ]
+);

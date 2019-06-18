@@ -1,10 +1,10 @@
 <div class="col-md-7 text-center" id="main-block">
   <div id="current-weather" class="d-inline-flex flex-row mb-md-2">
-    <span id="current-temp">{{weatherData?.main.temp | number:'1.0-0'}}&deg;</span>
+    <span id="current-weather-temp">{{weatherData?.main.temp | number:'1.0-0'}}&deg;</span>
     <div id="current-weather-description">
       <img src="assets/ico/weather-conditions/{{weatherData?.weather[0].icon}}.svg" alt="Иконка погоды"
-        id="weather-conditions-ico" class="d-block">
-      <span id="weather-condition">{{weatherData?.weather[0].description}}</span>
+        id="current-weather-conditions-ico" class="d-block">
+      <span id="current-weather-condition">{{weatherData?.weather[0].description}}</span>
     </div>
   </div>
   <div id="forecast-day" class="mb-3 mb-md-0">
@@ -26,7 +26,7 @@
   <div id="wrapper-param" class="collapse d-md-block">
     <div id="wind">
       <img src="assets/ico/parameters/wind.svg" alt="Иконка ветра" class="size-ico">
-      <span>{{weatherData?.wind.speed}} м/с, {{weather.fromGradToDir(weatherData?.wind.deg)}}</span>
+      <span>{{weatherData?.wind.speed}} м/с, {{(weatherData?.wind.deg | weatherParams:'wind')}}</span>
     </div>
     <div id="humidity">
       <img src="assets/ico/parameters/humidity.svg" alt="Иконка гигрометра" class="size-ico mr-2">
@@ -34,7 +34,7 @@
     </div>
     <div id="pressure">
       <img src="assets/ico/parameters/pressure.svg" alt="Иконка барометра" class="size-ico">
-      <span>{{weather.fromPaToHg(weatherData?.main.pressure).toFixed(0)}} мм.рт.ст.</span>
+      <span>{{weatherData?.main.pressure | weatherParams:'pressure'}} мм.рт.ст.</span>
     </div>
     <div id="sunrise">
       <img src="assets/ico/parameters/sunrise.svg" alt="Иконка восхода" class="size-ico">

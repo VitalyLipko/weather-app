@@ -1,39 +1,59 @@
 @import 'src/app-variables';
 
 .location-pagination {
-    height: 0.5em;
-    width: 0.5em;
-    background-color: var(--light);
+  height: 0.5em;
+  width: 0.5em;
+  background-color: var(--light);
 }
 
 #loc-name {
-    font-size: 2em;
+  font-size: 2em;
 }
 
 .selected {
-    background-color: $lightblue;
+  background-color: $lightblue;
 }
 
 #bookmark {
-    height: 50px;
-    width: 50px;
-    position: fixed;
-    right: 0;
-    top: 80%;
-    background-color: $lightblue;
-    box-shadow: 0.2em 0.1em 0.5em var(--dark);
+  position: fixed;
+  top: 80%;
+  right: 0;
+  height: 50px;
+  width: 50px;
+  box-shadow: 0.2em 0.1em 0.5em var(--dark);
 
-    #btn-label {
-        font-size: 2.5em;
-        position: relative;
-        top: -16px;
-        left: -2px;
-    }
+  #btn-label {
+    position: relative;
+    top: -16px;
+    left: -2px;
+    font-size: 2.5em;
+  }
 }
 
-#notifyMsg{
-    background-color: var(--light);
-    color: var(--dark);
-    min-height: 50px;
-    max-height: 100px;
+#notifyMsg {
+  min-height: 50px;
+  max-height: 100px;
+  background-color: var(--light);
+  color: var(--dark);
+}
+
+#notification-center-container {
+  position: fixed;
+  top: 120px;
+  left: 0px;
+  width: 350px;
+  height: 350px;
+  border-radius: 0 19px 19px 0;
+  background-color: var(--white);
+  box-shadow: 0.2em 0.1em 0.5em var(--dark);
+}
+
+@keyframes ringing {
+  0% { transform: rotate(20deg); }
+  50% { transform: rotate(-20deg); }
+  100% { transform: rotate(20deg); }
+}
+
+.ring {
+  animation: ringing 0.5s infinite ease-out;
 }

@@ -18,7 +18,7 @@ import { inputAnimation } from './animations';
 export class AppComponent {
   nameLocation = new FormControl('', [Validators.minLength(2), Validators.required]);
   isExpanded: boolean = false;
-  @ViewChild('inputRef')
+  @ViewChild('inputRef', { static: true })
   searchFormEl: ElementRef;
   isBgTransparent: boolean = true;
   isShowed = true;

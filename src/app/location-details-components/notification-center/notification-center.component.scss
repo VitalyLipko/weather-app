@@ -1,0 +1,31 @@
+@import 'src/app-variables';
+
+h4 {
+  color: var(--dark);
+}
+
+#wrapper {
+  max-height: 300px;
+  overflow: auto;
+
+  .notification {
+    color: var(--dark);
+    background-color: $lightblue;
+  }
+}
+
+#empty-notification {
+  position: relative;
+  top: 79px;
+
+    &-ico {
+      font-size: 5em;
+      color: var(--dark);
+    }
+}
+
+#close-btn {
+  position: absolute;
+  top: 0px;
+  left: 325px;
+}

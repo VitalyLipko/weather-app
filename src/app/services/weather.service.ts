@@ -229,21 +229,5 @@ export class WeatherService {
 
     return forecastDay;
   }
-
-  //Переводим метеорологические градусы (азимут точки, откуда дует ветер) в направление
-  fromGradToDir(grad: number): string {
-    if (grad === 0 || grad === 360) return "С";
-    else if (grad > 0 && grad < 90) return "СВ";
-    else if (grad === 90) return "С";
-    else if (grad > 90 && grad < 180) return "ЮВ";
-    else if (grad === 180) return "Ю";
-    else if (grad > 180 && grad < 270) return "ЮЗ";
-    else if (grad === 270) return "З";
-    else if (grad > 270 && grad < 360) return "СЗ";
-  }
-
-  //Переводим значение атмосферного давления из гПа в мм.рт.ст.
-  fromPaToHg(pressure: number): number {
-    return (pressure * 0.75006)//0.75006 - эквивалент 1 гПа в мм.рт.ст.
-  }
+  
 }

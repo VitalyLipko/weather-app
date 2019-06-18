@@ -18,6 +18,8 @@ import { Page404Component } from './page404/page404.component';
 import { WeatherComponent } from './location-details-components/weather/weather.component';
 import { ForecastComponent } from './location-details-components/forecast/forecast.component';
 import { environment } from '../environments/environment';
+import { WeatherParamsPipe } from './pipes/weather-params.pipe';
+import { NotificationCenterComponent } from './location-details-components/notification-center/notification-center.component';
 
 registerLocaleData(localeRu);
 
@@ -29,7 +31,9 @@ registerLocaleData(localeRu);
     LocationSearchComponent,
     Page404Component,
     WeatherComponent,
-    ForecastComponent
+    ForecastComponent,
+    WeatherParamsPipe,
+    NotificationCenterComponent
   ],
   imports: [
     BrowserModule,
@@ -39,7 +43,8 @@ registerLocaleData(localeRu);
     BrowserAnimationsModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
-  providers: [LowerCasePipe],
-  bootstrap: [AppComponent]
+  providers: [LowerCasePipe, WeatherParamsPipe],
+  bootstrap: [AppComponent],
+  exports: [WeatherParamsPipe]
 })
 export class AppModule { }
