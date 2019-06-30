@@ -6,10 +6,9 @@
       "/**"
     ],
     "cacheConfig": {
-      "strategy": "freshness",
+      "strategy": "performance",
       "maxSize": 50,
-      "maxAge": "3h",
-      "timeout": "10s"
+      "maxAge": "1h"
     }
   }],
   "assetGroups": [

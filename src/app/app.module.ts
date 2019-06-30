@@ -20,6 +20,8 @@ import { ForecastComponent } from './location-details-components/forecast/foreca
 import { environment } from '../environments/environment';
 import { WeatherParamsPipe } from './pipes/weather-params.pipe';
 import { NotificationCenterComponent } from './location-details-components/notification-center/notification-center.component';
+import { NearbyComponent } from './location-details-components/nearby/nearby.component';
+import { LocationCardComponent } from './location-card/location-card.component';
 
 registerLocaleData(localeRu);
 
@@ -33,7 +35,9 @@ registerLocaleData(localeRu);
     WeatherComponent,
     ForecastComponent,
     WeatherParamsPipe,
-    NotificationCenterComponent
+    NotificationCenterComponent,
+    NearbyComponent,
+    LocationCardComponent
   ],
   imports: [
     BrowserModule,

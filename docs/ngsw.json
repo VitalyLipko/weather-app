@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1560872361716,
+  "timestamp": 1561887069991,
   "index": "/weather-app/index.html",
   "assetGroups": [
     {
@@ -60,10 +60,9 @@
       "patterns": [
         "\\/.*"
       ],
-      "strategy": "freshness",
+      "strategy": "performance",
       "maxSize": 50,
-      "maxAge": 10800000,
-      "timeoutMs": 10000,
+      "maxAge": 3600000,
       "version": 1
     }
   ],
@@ -95,13 +94,13 @@
     "/weather-app/assets/icons/icon-512x512.png": "a2f829035c29258608b249554b5335beae02cdc6",
     "/weather-app/favicon.ico": "d0c65740d855d13aa007246d2c53c05abb4f8b8f",
     "/weather-app/index.html": "8fe680a6608e684dc8ade4bf5423c4c6aa839a4b",
-    "/weather-app/main-es2015.js": "fd987cc274288ff8218b3418fba211a5ce86e77b",
-    "/weather-app/main-es5.js": "67e158d2ceb16c41b746c72e715aefd136e5ac99",
+    "/weather-app/main-es2015.js": "826ffdc2041d86a8eb351aaefe9c2e4c527e4fae",
+    "/weather-app/main-es5.js": "2ed0efb3315075ee4a072d12d960d4bdc13b8b11",
     "/weather-app/polyfills-es2015.js": "0167eabb21353458ceb22b8230f3a2e6384bfbaa",
     "/weather-app/polyfills-es5.js": "6fc0853ae750029fef5a42310313615eba7fbef7",
     "/weather-app/runtime-es2015.js": "b62956c2192bfe5516d6374e753773901ed50ec5",
     "/weather-app/runtime-es5.js": "b62956c2192bfe5516d6374e753773901ed50ec5",
-    "/weather-app/styles.css": "402e7152e7b057057a25ad511d477908d8e47207"
+    "/weather-app/styles.css": "3fcf75be398dc5631c81ce733581404f3399c19a"
   },
   "navigationUrls": [
     {

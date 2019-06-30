@@ -1,4 +1,8 @@
-.location:hover:not(.ghost) {
+.location:hover:not(.ghost-item) {
   box-shadow: 0.3em 0.4em 1.4em -0.4em var(--dark);
   transition: box-shadow 0.2s ease-in;
+}
+
+#title {
+  font-size: 2em;
 }

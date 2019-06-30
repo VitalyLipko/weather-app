@@ -28,6 +28,7 @@
   </div>
   <forecast class="row" [forecastDays]="forecastDays" [forecastNights]="forecastNights"
     [timezoneOffset]="timezoneOffset"></forecast>
+  <nearby class="row" [list]="cycleWeatherData?.list" (open)="locationManagement.getData($event)"></nearby>
   <button type="button" id="bookmark" class="btn btn-custom rounded-circle mr-4" aria-label="Add or delete bookmark"
     (click)="changeState()">
     <div [@addDeleteAnimation]="locationManagement.isBookmark ? 'delete' : 'add'" id="btn-label">+</div>

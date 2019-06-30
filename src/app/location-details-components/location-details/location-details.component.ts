@@ -1,10 +1,9 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 
-import { WeatherService, WeatherData, ForecastData, List } from '../../services/weather.service';
+import { WeatherService, WeatherData, ForecastData, List, CycleWeatherData } from '../../services/weather.service';
 import { LocationManagementService } from '../../services/location-management.service';
-import { TimezoneService, TimezoneData } from '../../services/timezone.service';
 import { TagService } from 'src/app/services/tag.service';
 import { bookmarkAnimation, notifyAnimation, notificationCenterAnimation } from 'src/app/animations';
 
@@ -18,14 +17,12 @@ import { bookmarkAnimation, notifyAnimation, notificationCenterAnimation } from 
 export class LocationDetailsComponent implements OnInit, OnDestroy {
   weatherData: WeatherData;
   forecastData: ForecastData;
+  cycleWeatherData: CycleWeatherData;
   forecastDays: List[];
   forecastNights: List[];
   forecastDay: List[];
   timezoneOffset: string;
   private subscriptions: Subscription = new Subscription();
-  weatherData$: Observable<WeatherData>;
-  forecastData$: Observable<ForecastData>;
-  timezoneData$: Observable<TimezoneData>;
   isDataLoaded$: Observable<boolean>;
   isShown: boolean = false;
   isOpenedNotificationCenter: boolean = false;
@@ -33,20 +30,22 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   private timerIdNotify;
 
   @HostListener('window:load') getNewData() {
-    this.locationManagement.getData(sessionStorage.getItem('name'));
+    this.locationManagement.getData(Number(sessionStorage.getItem('id')));
   }
 
   constructor(
     public weather: WeatherService,
     public locationManagement: LocationManagementService,
-    public timezone: TimezoneService,
-    private seo: TagService
+    private seo: TagService,
+    private renderer: Renderer2
   ) { }
 
   ngOnInit() {
     this.subscriptions.add(
       this.weather.weatherDataStorage$.pipe(
         tap(weatherData => {
+          this.closeNotify();
+          window.scrollTo(0, 0);
           this.weatherData = weatherData;
           if (localStorage.getItem('locations'))
             this.locationManagement.locations = JSON.parse(localStorage.getItem('locations'));
@@ -54,24 +53,25 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
           this.seo.setPageTitle('Weather App | Прогноз погоды в ' + weatherData.name);
           this.seo.setPageDescription('Прогноз текущей погоды, почасовой и пятидневный.');
           this.seo.setMetaRobots('index, follow');
-          sessionStorage.setItem('name', weatherData.name);
+          sessionStorage.setItem('id', weatherData.id.toString());
         }),
         switchMap(() => this.weather.forecastDataStorage$.pipe(
-          tap(forecastData => {
-            this.forecastData = forecastData;
-            this.forecastDay = this.weather.getForecastDay(forecastData.list);
-          }),
-          switchMap(() => this.timezone.timezoneDataStorage$)
+          tap(
+            forecastData => {
+              if (this.weatherData.timezone >= 0) this.timezoneOffset = '+' + (this.weatherData.timezone / 3600).toString();
+              else this.timezoneOffset = (this.weatherData.timezone / 3600).toString();
+              this.weather.forecastTz = this.weatherData.timezone / 3600;
+              this.forecastData = forecastData;
+              this.forecastDay = this.weather.getForecastDay(forecastData.list);
+              this.forecastDays = this.weather.getForecastDays(this.forecastData.list, this.weather.forecastTz);
+              this.forecastNights = this.weather.getForecastNights(this.forecastData.list, this.weather.forecastTz);
+              this.weather.isDataLoaded = true;
+            }
+          ),
+          switchMap(() => this.weather.cycleWeatherDataStorage$)
         ))
       ).subscribe(
-        timezoneData => {
-          if (timezoneData.gmtOffset >= 0) this.timezoneOffset = '+' + (timezoneData.gmtOffset / 3600).toString();
-          else this.timezoneOffset = (timezoneData.gmtOffset / 3600).toString();
-          this.weather.forecastTz = timezoneData.gmtOffset / 3600;
-          this.forecastDays = this.weather.getForecastDays(this.forecastData.list, this.weather.forecastTz);
-          this.forecastNights = this.weather.getForecastNights(this.forecastData.list, this.weather.forecastTz);
-          this.weather.isDataLoaded = true;
-        }
+        cycleWeatherData => this.cycleWeatherData = cycleWeatherData
       )
     );
     this.isDataLoaded$ = this.weather.isDataLoaded$;
@@ -81,14 +81,15 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.subscriptions) this.subscriptions.unsubscribe();
     if (this.timerIdNotify) clearTimeout(this.timerIdNotify);
+    if (this.isOpenedNotificationCenter) this.renderer.removeClass(document.body, 'show-notification-center');
   }
 
   next() {
     let i = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
     if (i === -1) i = 0;
     if (i !== (this.locationManagement.locations.length - 1))
-      this.locationManagement.getData(this.locationManagement.locations[++i].name);
-    else this.locationManagement.getData(this.locationManagement.locations[0].name);
+      this.locationManagement.getData(this.locationManagement.locations[++i].id);
+    else this.locationManagement.getData(this.locationManagement.locations[0].id);
     this.isOpenedNotificationCenter = false;
   }
 
@@ -96,8 +97,8 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
     let i = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
     if (i === -1) i = 0;
     if (i === 0)
-      this.locationManagement.getData(this.locationManagement.locations[this.locationManagement.locations.length - 1].name);
-    else this.locationManagement.getData(this.locationManagement.locations[--i].name);
+      this.locationManagement.getData(this.locationManagement.locations[this.locationManagement.locations.length - 1].id);
+    else this.locationManagement.getData(this.locationManagement.locations[--i].id);
     this.isOpenedNotificationCenter = false;
   }
 
@@ -121,6 +122,8 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   }
 
   onClick() {
-     this.isOpenedNotificationCenter = !this.isOpenedNotificationCenter;
+    this.isOpenedNotificationCenter = !this.isOpenedNotificationCenter;
+    if (this.isOpenedNotificationCenter) this.renderer.addClass(document.body, 'show-notification-center');
+    else this.renderer.removeClass(document.body, 'show-notification-center');
   }
 }

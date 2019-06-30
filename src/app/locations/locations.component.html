@@ -3,32 +3,11 @@
     <p class="text-center">Список пуст! Добавьте хотя бы одно место с помощью кнопки "+" на странице прогноза.</p>
   </ng-container>
   <ng-template #locationsTemplate>
-    <div class="location col-6 col-md-4 col-lg-3 col-xl-2 mb-3"
-      *ngFor="let location of (groupWeatherData$ | async)?.list; last as isLast; trackBy: trackByFn;"
-      [class.mr-lg-2]="!isLast" [class.ghost-item]="!location">
-      <div class="clearfix">
-        <div class="location-name float-left name">{{location?.name}}</div>
-        <button type="button" class="close" aria-label="Delete" (click)="locationManagement.delete(location?.name)">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="location-current-weather d-inline-flex flex-row mb-md-2 w-100"
-        (click)="locationManagement.getData(location?.name)">
-        <span class="location-current-temp temp">
-          {{location?.main.temp | number:'1.0-0'}}<ng-container *ngIf="location?.main.temp">&deg;</ng-container>
-        </span>
-        <div>
-          <ng-container *ngIf="location?.weather[0].icon; else ghostTemplate">
-            <img src="assets/ico/weather-conditions/{{location?.weather[0].icon}}.svg" alt="Иконка погоды"
-              class="conditions-ico d-block">
-            <div class="condition">{{location?.weather[0].description}}</div>
-          </ng-container>
-          <ng-template #ghostTemplate>
-            <div class="d-block icon"></div>
-            <div class="description"></div>
-          </ng-template>
-        </div>
-      </div>
-    </div>
+    <ng-container *ngFor="let location of (groupWeatherData$ | async)?.list; last as isLast; trackBy: trackByFn">
+      <location-card class="location col-6 col-md-4 col-lg-3 col-xl-2 mb-3" [location]="location" [enableClosing]="true"
+        [class.mr-lg-2]="!isLast" [class.ghost]="!location" (open)="locationManagement.getData(location?.id)"
+        (close)="locationManagement.delete(location?.name)">
+      </location-card>
+    </ng-container>
   </ng-template>
 </div>

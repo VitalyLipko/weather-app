@@ -4,7 +4,6 @@ import { LowerCasePipe } from '@angular/common';
 import { switchMap, tap } from 'rxjs/operators';
 
 import { WeatherService, WeatherData, GroupWeatherData } from './weather.service';
-import { TimezoneService } from './timezone.service';
 
 interface Locations {
   id: number;
@@ -22,8 +21,7 @@ export class LocationManagementService {
   constructor(
     private weather: WeatherService,
     private router: Router,
-    private lowerCasePipe: LowerCasePipe,
-    private timezone: TimezoneService
+    private lowerCasePipe: LowerCasePipe
   ) { }
 
   isLocationExist(name: string): boolean {
@@ -65,10 +63,10 @@ export class LocationManagementService {
     }
   }
 
-  getData(name: string) {
-    if (!name) return;
+  getData(id: number) {
+    if (!id) return;
     this.weather.isDataLoaded = false;
-    this.weather.getWeatherDataByName(name).pipe(
+    this.weather.getWeatherDataById(id).pipe(
       tap(
         weatherData => this.weather.saveWeatherData(weatherData),
         error => {
@@ -77,11 +75,11 @@ export class LocationManagementService {
           this.router.navigate(['/search']);
         }
       ),
-      switchMap(() => this.weather.getForecastDataByName(name).pipe(
+      switchMap(() => this.weather.getForecastDataById(id).pipe(
         tap(
           forecastData => {
             this.weather.saveForecastData(forecastData);
-            if (this.router.url.substr(1, 9) === 'locations')
+            if (this.router.url.substr(1, 9) === 'locations' && this.isLocationExist(forecastData.city.name))
               this.router.navigate([`/locations/${this.lowerCasePipe.transform(forecastData.city.name)}`]);
             else this.router.navigate([`${this.lowerCasePipe.transform(forecastData.city.name)}`]);
           },
@@ -90,11 +88,16 @@ export class LocationManagementService {
             this.weather.errorStatus = error.status;
           }
         ),
-        switchMap(forecastData => this.timezone.getTimezone(forecastData.city.coord))
+        switchMap(forecastData => this.weather.getCycleWeatherData(
+          {
+            latitude: forecastData.city.coord.lat,
+            longitude: forecastData.city.coord.lon
+          }
+        ))
       ))
     ).subscribe(
-      timezoneData => this.timezone.saveTimezoneDataStorage(timezoneData),
-      () => console.error('Error in retrieving timezone data.')
+      cycleWeatherData => this.weather.saveCycleWeatherData(cycleWeatherData),
+      () => console.error('Error in retrieving cycle weather data.')
     );
   }
 

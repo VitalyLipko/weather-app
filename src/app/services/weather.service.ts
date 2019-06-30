@@ -18,6 +18,7 @@ export interface WeatherData {
   snow: Snow;
   dt: number;
   sys: Sys;
+  timezone: number;
   id: number;
   name: string;
   cod: number;
@@ -33,6 +34,13 @@ export interface ForecastData {
 
 export interface GroupWeatherData {
   cnt: number;
+  list: WeatherData[];
+}
+
+export interface CycleWeatherData {
+  message: string;
+  cod: number;
+  count: number;
   list: WeatherData[];
 }
 
@@ -108,6 +116,7 @@ interface UrlApi {
   readonly weather: string;
   readonly forecast: string;
   readonly group: string;
+  readonly cycle: string;
 }
 
 @Injectable({
@@ -117,18 +126,22 @@ export class WeatherService {
   private urlApi: UrlApi = {
     weather: 'https://api.openweathermap.org/data/2.5/weather?',
     forecast: 'https://api.openweathermap.org/data/2.5/forecast?',
-    group: 'https://api.openweathermap.org/data/2.5/group?'
+    group: 'https://api.openweathermap.org/data/2.5/group?',
+    cycle: 'https://api.openweathermap.org/data/2.5/find?',
   }
 
   private weatherDataStorage = new ReplaySubject<WeatherData>(1, 2000);
   private forecastDataStorage = new ReplaySubject<ForecastData>(1, 2000);
+  private cycleWeatherDataStorage = new ReplaySubject<CycleWeatherData>(1, 2000);
   weatherDataStorage$ = this.weatherDataStorage.asObservable();
   forecastDataStorage$ = this.forecastDataStorage.asObservable();
+  cycleWeatherDataStorage$ = this.cycleWeatherDataStorage.asObservable();
   private _errorStatus = new ReplaySubject<number>(1, 2000);
   errorStatus$ = this._errorStatus.asObservable();
-  forecastTz: number;
   private _isDataLoaded = new ReplaySubject<boolean>(1, 2000);
   isDataLoaded$ = this._isDataLoaded.asObservable();
+  forecastTz: number;
+
   constructor(private http: HttpClient) { }
 
   set isDataLoaded(state: boolean) {
@@ -169,6 +182,23 @@ export class WeatherService {
     ).pipe(retry(1), catchError(this.handleError));
   }
 
+  getCycleWeatherData(position: Position): Observable<CycleWeatherData> {
+    return this.http.get<CycleWeatherData>(
+      `${this.urlApi.cycle}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&cnt=6&appid=${apiKey}`
+    ).pipe(retry(2), catchError(this.handleError));
+  }
+
+  getWeatherDataById(id: number): Observable<WeatherData> {
+    return this.http.get<WeatherData>(
+      `${this.urlApi.weather}id=${id}&units=metric&lang=ru&appid=${apiKey}`
+    ).pipe(retry(2), catchError(this.handleError));
+  }
+
+  getForecastDataById(id: number): Observable<ForecastData> {
+    return this.http.get<ForecastData>(
+      `${this.urlApi.forecast}id=${id}&units=metric&lang=ru&appid=${apiKey}`
+    ).pipe(retry(2), catchError(this.handleError));
+  }
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
@@ -185,6 +215,10 @@ export class WeatherService {
 
   saveForecastData(data: ForecastData) {
     this.forecastDataStorage.next(data);
+  }
+
+  saveCycleWeatherData(data: CycleWeatherData) {
+    this.cycleWeatherDataStorage.next(data);
   }
 
   //Получаем из списка пятидневного прогноза прогноз на дневные часы
@@ -229,5 +263,5 @@ export class WeatherService {
 
     return forecastDay;
   }
-  
+
 }

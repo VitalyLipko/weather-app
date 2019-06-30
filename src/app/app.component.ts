@@ -5,7 +5,6 @@ import { LowerCasePipe } from '@angular/common';
 import { switchMap, tap } from 'rxjs/operators';
 
 import { WeatherService } from './services/weather.service';
-import { TimezoneService } from './services/timezone.service';
 import { GeolocationService } from './services/geolocation.service';
 import { inputAnimation } from './animations';
 
@@ -26,7 +25,6 @@ export class AppComponent {
     public weather: WeatherService,
     private router: Router,
     private lowerCasePipe: LowerCasePipe,
-    private timezone: TimezoneService,
     public geolocation: GeolocationService
   ) { }
 
@@ -56,11 +54,14 @@ export class AppComponent {
             this.weather.errorStatus = error.status;
           }
         ),
-        switchMap(forecastData => this.timezone.getTimezone(forecastData.city.coord))
+        switchMap(forecastData => this.weather.getCycleWeatherData({
+          latitude: forecastData.city.coord.lat,
+          longitude: forecastData.city.coord.lon
+        }))
       ))
     ).subscribe(
-      timezoneData => this.timezone.saveTimezoneDataStorage(timezoneData),
-      () => console.error('Error in retrieving timezone data.')
+      cycleWeatherData => this.weather.saveCycleWeatherData(cycleWeatherData),
+      () => console.error('Error in retrieving cycle weather data.')
     );
   }
 
