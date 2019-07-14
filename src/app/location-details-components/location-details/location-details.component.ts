@@ -24,8 +24,8 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   timezoneOffset: string;
   private subscriptions: Subscription = new Subscription();
   isDataLoaded$: Observable<boolean>;
-  isShown: boolean = false;
-  isOpenedNotificationCenter: boolean = false;
+  isShown = false;
+  isOpenedNotificationCenter = false;
   ringing: boolean;
   private timerIdNotify;
 
@@ -56,23 +56,18 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
           sessionStorage.setItem('id', weatherData.id.toString());
         }),
         switchMap(() => this.weather.forecastDataStorage$.pipe(
-          tap(
-            forecastData => {
-              if (this.weatherData.timezone >= 0) this.timezoneOffset = '+' + (this.weatherData.timezone / 3600).toString();
-              else this.timezoneOffset = (this.weatherData.timezone / 3600).toString();
-              this.weather.forecastTz = this.weatherData.timezone / 3600;
-              this.forecastData = forecastData;
-              this.forecastDay = this.weather.getForecastDay(forecastData.list);
-              this.forecastDays = this.weather.getForecastDays(this.forecastData.list, this.weather.forecastTz);
-              this.forecastNights = this.weather.getForecastNights(this.forecastData.list, this.weather.forecastTz);
-              this.weather.isDataLoaded = true;
-            }
-          ),
+          tap(forecastData => {
+            if (this.weatherData.timezone >= 0) this.timezoneOffset = '+' + (this.weatherData.timezone / 3600).toString();
+            else this.timezoneOffset = (this.weatherData.timezone / 3600).toString();
+            this.weather.forecastTz = this.weatherData.timezone / 3600;
+            this.forecastData = forecastData;
+            this.forecastDay = this.weather.getForecastDay(forecastData.list);
+            this.forecastDays = this.weather.getForecastDays(this.forecastData.list, this.weather.forecastTz);
+            this.forecastNights = this.weather.getForecastNights(this.forecastData.list, this.weather.forecastTz);
+          }),
           switchMap(() => this.weather.cycleWeatherDataStorage$)
         ))
-      ).subscribe(
-        cycleWeatherData => this.cycleWeatherData = cycleWeatherData
-      )
+      ).subscribe(cycleWeatherData => this.cycleWeatherData = cycleWeatherData)
     );
     this.isDataLoaded$ = this.weather.isDataLoaded$;
   }

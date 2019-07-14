@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, ReplaySubject } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { Observable, throwError, ReplaySubject, pipe, zip, range, timer, of } from 'rxjs';
+import { catchError, retry, retryWhen, map, mergeMap, delay } from 'rxjs/operators';
 
 import { Position } from './geolocation.service';
 
 const apiKey = 'f25ad0c5cec3176c83ad8d9daddb8fe2';
+const defaultDelay = 250;
+const defaultBackoff = 1000;
 
 export interface WeatherData {
   coord: Coord;
@@ -119,6 +121,48 @@ interface UrlApi {
   readonly cycle: string;
 }
 
+function retryWithBackoff(maxRetry: number, delayMs = defaultDelay, backoffMs = defaultBackoff) {
+  let retries = maxRetry;
+
+  return (src: Observable<any>) =>
+    src.pipe(
+      retryWhen((errors: Observable<any>) => errors.pipe(
+        mergeMap(error => {
+          if (retries-- > 0) {
+            const backoffTime = delayMs + (maxRetry - retries) * backoffMs;
+            return of(error).pipe(delay(backoffTime));
+          }
+
+          return handleError(error);
+        })
+      ))
+    );
+}
+
+function handleError(error: HttpErrorResponse) {
+  let message: string;
+
+  if (error.error instanceof ErrorEvent) {
+    console.error('An error occurred: ', error.error.message);
+  } else {
+    console.error(`Openweathermap API returned code ${error.status} ` + `body was: ${error.error.message}`);
+  }
+
+  if (error.url.includes('weather?')) {
+    message = 'Error in retrieving weather data';
+  } else if (error.url.includes('forecast?')) {
+    message = 'Error in retrieving forecast data';
+  } else if (error.url.includes('group?')) {
+    message = 'Error in retrieving group data';
+  } else if (error.url.includes('find?')) {
+    message = 'Error in retrieving cycle data';
+  } else {
+    message = 'Something bad happened';
+  }
+
+  return throwError({ error, message });
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -155,58 +199,49 @@ export class WeatherService {
   getWeatherDataByPosition(position: Position): Observable<WeatherData> {
     return this.http.get<WeatherData>(
       `${this.urlApi.weather}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retry(2), catchError(this.handleError));
+    ).pipe(retryWithBackoff(2));
   }
 
   getForecastDataByPosition(position: Position): Observable<ForecastData> {
     return this.http.get<ForecastData>(
       `${this.urlApi.forecast}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retry(2), catchError(this.handleError));
+    ).pipe(retryWithBackoff(2));
   }
 
   getWeatherDataByName(name: string): Observable<WeatherData> {
     return this.http.get<WeatherData>(
       `${this.urlApi.weather}q=${name}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retry(2), catchError(this.handleError));
+    ).pipe(retryWithBackoff(2));
   }
 
   getForecastDataByName(name: string): Observable<ForecastData> {
     return this.http.get<ForecastData>(
       `${this.urlApi.forecast}q=${name}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retry(2), catchError(this.handleError));
+    ).pipe(retryWithBackoff(2));
   }
 
   getGroupWeatherData(idList: string): Observable<GroupWeatherData> {
     return this.http.get<GroupWeatherData>(
       `${this.urlApi.group}id=${idList}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retry(1), catchError(this.handleError));
+    ).pipe(retryWithBackoff(1));
   }
 
   getCycleWeatherData(position: Position): Observable<CycleWeatherData> {
     return this.http.get<CycleWeatherData>(
       `${this.urlApi.cycle}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&cnt=6&appid=${apiKey}`
-    ).pipe(retry(2), catchError(this.handleError));
+    ).pipe(retryWithBackoff(2));
   }
 
   getWeatherDataById(id: number): Observable<WeatherData> {
     return this.http.get<WeatherData>(
       `${this.urlApi.weather}id=${id}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retry(2), catchError(this.handleError));
+    ).pipe(retryWithBackoff(2));
   }
 
   getForecastDataById(id: number): Observable<ForecastData> {
     return this.http.get<ForecastData>(
       `${this.urlApi.forecast}id=${id}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retry(2), catchError(this.handleError));
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    if (error.error instanceof ErrorEvent) {
-      console.error('An error occurred: ', error.error.message);
-    } else {
-      console.error(`Openweathermap API returned code ${error.status} ` + `body was: ${error.error}`);
-    }
-    return throwError(error);
+    ).pipe(retryWithBackoff(2));
   }
 
   saveWeatherData(data: WeatherData) {

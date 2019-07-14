@@ -37,9 +37,10 @@ export class AppComponent {
           this.nameLocation.setValue('');
         },
         error => {
-          console.error('Error in retrieving weather data.');
-          this.weather.errorStatus = error.status;
+          console.error(error.message);
+          this.weather.errorStatus = error.error.status;
           this.nameLocation.setValue('');
+          this.weather.isDataLoaded = true;
           this.router.navigate(['/search']);
         }
       ),
@@ -47,11 +48,15 @@ export class AppComponent {
         tap(
           forecastData => {
             this.weather.saveForecastData(forecastData);
+            this.weather.isDataLoaded = true;
             this.router.navigate([`${this.lowerCasePipe.transform(forecastData.city.name)}`]);
           },
           error => {
-            console.error('Error in retrieving forecast data.');
-            this.weather.errorStatus = error.status;
+            console.error(error.message);
+            this.weather.errorStatus = error.error.status;
+            this.nameLocation.setValue('');
+            this.weather.isDataLoaded = true;
+            this.router.navigate(['/search']);
           }
         ),
         switchMap(forecastData => this.weather.getCycleWeatherData({
@@ -61,7 +66,7 @@ export class AppComponent {
       ))
     ).subscribe(
       cycleWeatherData => this.weather.saveCycleWeatherData(cycleWeatherData),
-      () => console.error('Error in retrieving cycle weather data.')
+      error => console.error(error.message)
     );
   }
 

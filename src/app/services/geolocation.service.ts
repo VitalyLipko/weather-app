@@ -37,11 +37,13 @@ export class GeolocationService {
   }
 
   getCurrentPosition() {
+    this.weather.isDataLoaded = false;
     navigator.geolocation.getCurrentPosition(
       (position) => this.successPosition(position),
       (error) => {
         console.error('Geolocation failure: ' + error.message);
         this.errorCode = error.code;
+        this.weather.isDataLoaded = true;
         this.router.navigate(['/search']);
       },
       { timeout: 15000, maximumAge: 600000 }
@@ -50,24 +52,27 @@ export class GeolocationService {
 
   successPosition(position) {
     this.errorCode = 0;
-    this.weather.isDataLoaded = false;
     this.weather.getWeatherDataByPosition(position.coords).pipe(
       tap(
         weatherData => this.weather.saveWeatherData(weatherData),
         error => {
-          console.error('Error in retrieving weather data.');
-          this.weather.errorStatus = error.status;
+          console.error(error.message);
+          this.weather.errorStatus = error.error.status;
+          this.weather.isDataLoaded = true;
+          this.router.navigate(['/search']);
         }
       ),
       switchMap(() => this.weather.getForecastDataByPosition(position.coords).pipe(
         tap(
           forecastData => {
             this.weather.saveForecastData(forecastData);
+            this.weather.isDataLoaded = true;
             this.router.navigate([`${this.lowerCasePipe.transform(forecastData.city.name)}`])
           },
           error => {
-            console.error('Error in retrieving forecast data.');
-            this.weather.errorStatus = error.status;
+            console.error(error.message);
+            this.weather.errorStatus = error.error.status;
+            this.weather.isDataLoaded = true;
             this.router.navigate(['/search']);
           }
         ),
@@ -75,7 +80,7 @@ export class GeolocationService {
       ))
     ).subscribe(
       cycleWeatherData => this.weather.saveCycleWeatherData(cycleWeatherData),
-      () => console.error('Error in retrieving cycle weather data.')
+      error => console.error(error.message)
     );
   }
 }

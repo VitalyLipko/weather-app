@@ -70,8 +70,9 @@ export class LocationManagementService {
       tap(
         weatherData => this.weather.saveWeatherData(weatherData),
         error => {
-          console.error('Error in retrieving weather data.');
-          this.weather.errorStatus = error.status;
+          console.error(error.message);
+          this.weather.errorStatus = error.error.status;
+          this.weather.isDataLoaded = true;
           this.router.navigate(['/search']);
         }
       ),
@@ -79,13 +80,16 @@ export class LocationManagementService {
         tap(
           forecastData => {
             this.weather.saveForecastData(forecastData);
+            this.weather.isDataLoaded = true;
             if (this.router.url.substr(1, 9) === 'locations' && this.isLocationExist(forecastData.city.name))
               this.router.navigate([`/locations/${this.lowerCasePipe.transform(forecastData.city.name)}`]);
             else this.router.navigate([`${this.lowerCasePipe.transform(forecastData.city.name)}`]);
           },
           error => {
-            console.error('Error in retrieving forecast data.');
-            this.weather.errorStatus = error.status;
+            console.error(error.message);
+            this.weather.errorStatus = error.error.status;
+            this.weather.isDataLoaded = true;
+            this.router.navigate(['/search']);
           }
         ),
         switchMap(forecastData => this.weather.getCycleWeatherData(
@@ -97,7 +101,7 @@ export class LocationManagementService {
       ))
     ).subscribe(
       cycleWeatherData => this.weather.saveCycleWeatherData(cycleWeatherData),
-      () => console.error('Error in retrieving cycle weather data.')
+      error => console.error(error.message)
     );
   }
 
