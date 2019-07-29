@@ -25,13 +25,11 @@ export class LocationManagementService {
   ) { }
 
   isLocationExist(name: string): boolean {
-    if (this.locations.find(location => location.name === name)) return true;
-    return false;
+    return !!this.locations.find(location => location.name === name);
   }
 
   enablePagination(): boolean {
-    if (this.router.url.substr(0, 10) === '/locations' && this.locations.length > 1) return true;
-    return false;
+    return (this.router.url.substr(0, 10) === '/locations' && this.locations.length > 1);
   }
 
   manage(weatherData: WeatherData) {

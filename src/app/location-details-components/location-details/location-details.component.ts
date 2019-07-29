@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 import { WeatherService, WeatherData, ForecastData, List, CycleWeatherData } from '../../services/weather.service';
 import { LocationManagementService } from '../../services/location-management.service';
@@ -22,54 +23,64 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   forecastNights: List[];
   forecastDay: List[];
   timezoneOffset: string;
-  private subscriptions: Subscription = new Subscription();
+  private subscriptions = new Subscription();
   isDataLoaded$: Observable<boolean>;
   isShown = false;
   isOpenedNotificationCenter = false;
   ringing: boolean;
   private timerIdNotify;
+  enablePagination: boolean;
+  selectedIndex: number;
 
   @HostListener('window:load') getNewData() {
-    this.locationManagement.getData(Number(sessionStorage.getItem('id')));
+    const id = Number(localStorage.getItem('lastId'));
+    if (id) this.locationManagement.getData(id);
+    else this.router.navigate(['/search']);
   }
 
   constructor(
     public weather: WeatherService,
     public locationManagement: LocationManagementService,
     private seo: TagService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private router: Router
   ) { }
 
   ngOnInit() {
+    this.isDataLoaded$ = this.weather.isDataLoaded$;
     this.subscriptions.add(
       this.weather.weatherDataStorage$.pipe(
-        tap(weatherData => {
+        switchMap(weatherData => {
           this.closeNotify();
           window.scrollTo(0, 0);
           this.weatherData = weatherData;
-          if (localStorage.getItem('locations'))
+          if (localStorage.getItem('locations')) {
             this.locationManagement.locations = JSON.parse(localStorage.getItem('locations'));
+          }
           this.locationManagement.isBookmark = this.locationManagement.isLocationExist(weatherData.name);
           this.seo.setPageTitle('Weather App | Прогноз погоды в ' + weatherData.name);
           this.seo.setPageDescription('Прогноз текущей погоды, почасовой и пятидневный.');
           this.seo.setMetaRobots('index, follow');
-          sessionStorage.setItem('id', weatherData.id.toString());
-        }),
-        switchMap(() => this.weather.forecastDataStorage$.pipe(
-          tap(forecastData => {
-            if (this.weatherData.timezone >= 0) this.timezoneOffset = '+' + (this.weatherData.timezone / 3600).toString();
-            else this.timezoneOffset = (this.weatherData.timezone / 3600).toString();
-            this.weather.forecastTz = this.weatherData.timezone / 3600;
-            this.forecastData = forecastData;
-            this.forecastDay = this.weather.getForecastDay(forecastData.list);
-            this.forecastDays = this.weather.getForecastDays(this.forecastData.list, this.weather.forecastTz);
-            this.forecastNights = this.weather.getForecastNights(this.forecastData.list, this.weather.forecastTz);
-          }),
-          switchMap(() => this.weather.cycleWeatherDataStorage$)
-        ))
+          localStorage.setItem('lastId', weatherData.id.toString());
+
+          return this.weather.forecastDataStorage$.pipe(
+            switchMap(forecastData => {
+              if (this.weatherData.timezone >= 0) this.timezoneOffset = '+' + (this.weatherData.timezone / 3600).toString();
+              else this.timezoneOffset = (this.weatherData.timezone / 3600).toString();
+              this.weather.forecastTz = this.weatherData.timezone / 3600;
+              this.forecastData = forecastData;
+              this.forecastDay = this.weather.getForecastDay(forecastData.list);
+              this.forecastDays = this.weather.getForecastDays(this.forecastData.list, this.weather.forecastTz);
+              this.forecastNights = this.weather.getForecastNights(this.forecastData.list, this.weather.forecastTz);
+              this.enablePagination = this.locationManagement.enablePagination();
+              this.selectedIndex = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
+
+              return this.weather.cycleWeatherDataStorage$;
+            })
+          );
+        })
       ).subscribe(cycleWeatherData => this.cycleWeatherData = cycleWeatherData)
     );
-    this.isDataLoaded$ = this.weather.isDataLoaded$;
   }
 
   @HostListener('window:beforeunload')
@@ -86,6 +97,7 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
       this.locationManagement.getData(this.locationManagement.locations[++i].id);
     else this.locationManagement.getData(this.locationManagement.locations[0].id);
     this.isOpenedNotificationCenter = false;
+    this.scrollState(this.isOpenedNotificationCenter);
   }
 
   previous() {
@@ -95,14 +107,13 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
       this.locationManagement.getData(this.locationManagement.locations[this.locationManagement.locations.length - 1].id);
     else this.locationManagement.getData(this.locationManagement.locations[--i].id);
     this.isOpenedNotificationCenter = false;
-  }
-
-  selectedIndex(): number {
-    return this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
+    this.scrollState(this.isOpenedNotificationCenter);
   }
 
   changeState() {
     this.locationManagement.manage(this.weatherData);
+    this.enablePagination = this.locationManagement.enablePagination();
+    this.selectedIndex = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
     this.isShown = !this.isShown;
     if (this.timerIdNotify) clearTimeout(this.timerIdNotify);
     if (!this.isShown) this.isShown = true;
@@ -118,7 +129,17 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
 
   onClick() {
     this.isOpenedNotificationCenter = !this.isOpenedNotificationCenter;
-    if (this.isOpenedNotificationCenter) this.renderer.addClass(document.body, 'show-notification-center');
+    this.scrollState(this.isOpenedNotificationCenter);
+  }
+
+  openLocation(id: number) {
+    this.isOpenedNotificationCenter = false;
+    this.scrollState(this.isOpenedNotificationCenter);
+    this.locationManagement.getData(id);
+  }
+
+  private scrollState(state: boolean) {
+    if (state) this.renderer.addClass(document.body, 'show-notification-center');
     else this.renderer.removeClass(document.body, 'show-notification-center');
   }
 }

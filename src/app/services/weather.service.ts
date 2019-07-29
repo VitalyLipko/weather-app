@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, ReplaySubject, pipe, zip, range, timer, of } from 'rxjs';
-import { catchError, retry, retryWhen, map, mergeMap, delay } from 'rxjs/operators';
+import { Observable, throwError, ReplaySubject, of } from 'rxjs';
+import { retryWhen, mergeMap, delay } from 'rxjs/operators';
 
 import { Position } from './geolocation.service';
 

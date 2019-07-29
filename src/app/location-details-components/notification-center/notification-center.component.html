@@ -3,24 +3,24 @@
   <div id="wrapper">
     <div *ngIf="pressureData" class="alert notification px-2" role="alert">
       {{pressureData[0].dt*1000 | date:'d MMMM':timezoneOffset:'ru'}}
-      ожидается {{changeValue(pressureData[1])}} атмосферного давления до
+      ожидается {{changePressure}} атмосферного давления до
       {{pressureData[0].main.pressure | weatherParams:'pressure'}} мм.рт.ст.
     </div>
     <div *ngIf="precipitationData[0]" class="alert notification px-2" role="alert">
       <ng-container *ngFor="let day of precipitationData">
         {{day.dt*1000 | date:'d MMMM':timezoneOffset:'ru'}}:
-        {{typeOfPrecipitation(day.weather[0].id)}}. <br>
+        {{day.weather[0].id | weatherParams: 'precipitation'}}. <br>
       </ng-container> 
     </div>
     <div *ngIf="tempData" class="alert notification px-2" role="alert">
-        {{tempData[0].dt*1000 | date:'d MMMM':timezoneOffset:'ru'}}
-        ожидается {{changeValue(tempData[1])}} температуры до
-        {{tempData[0].main.temp | number:'1.0-0'}}&deg;
+      {{tempData[0].dt*1000 | date:'d MMMM':timezoneOffset:'ru'}}
+      ожидается {{changeTemp}} температуры до
+      {{tempData[0].main.temp | number:'1.0-0'}}&deg;
     </div>
     <div *ngIf="windData" class="alert notification px-2" role="alert">
-        {{windData.dt*1000 | date:'d MMMM':timezoneOffset:'ru'}}
-        штормовое предупреждение: порывы ветра до
-        {{windData.wind.speed}} м/с
+      {{windData.dt*1000 | date:'d MMMM':timezoneOffset:'ru'}}
+      штормовое предупреждение: порывы ветра до
+      {{windData.wind.speed}} м/с
     </div>
   </div>
 </ng-container>

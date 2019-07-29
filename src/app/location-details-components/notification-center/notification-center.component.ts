@@ -14,35 +14,38 @@ export class NotificationCenterComponent implements OnInit {
   @Input() timezoneOffset: string;
   @Output() ringing = new EventEmitter<boolean>();
   @Output() close = new EventEmitter<any>();
+
   pressureData: [List, number];
   precipitationData: List[] = [];
   tempData: [List, number];
   windData: List;
   notification = false;
+  changeTemp: string;
+  changePressure: string;
 
   constructor(private notificationCenterService: NotificationCenterService) { }
 
   ngOnInit() {
     this.pressureData = this.notificationCenterService.pressureNotify(this.weatherData, this.forecastData);
-    if (this.pressureData) this.notification = true;
+    if (this.pressureData) {
+      this.changePressure = this.changeValue(this.pressureData[1]);
+      this.notification = true;
+    }
     this.precipitationData = this.notificationCenterService.precipitationNotify(this.forecastData);
     if (this.precipitationData[0]) this.notification = true;
     this.tempData = this.notificationCenterService.tempNotify(this.weatherData, this.forecastData);
-    if (this.tempData) this.notification = true;
+    if (this.tempData) {
+      this.changeTemp = this.changeValue(this.tempData[1]);
+      this.notification = true;
+    }
     this.windData = this.notificationCenterService.windNotify(this.forecastData);
     if (this.windData) this.notification = true;
     this.ringing.emit(this.notification);
   }
 
-  changeValue(delta: number): string {
+  private changeValue(delta: number): string {
     if (delta > 0) return 'понижение';
     return 'повышение';
-  }
-
-  typeOfPrecipitation(id: number): string {
-    if (id >= 200 && id < 300) return 'гроза';
-    else if (id >= 502 && id < 600) return 'сильный дождь';
-    else if (id === 602 || id === 622) return 'сильный снегопад';
   }
 
   onClose() {

@@ -1,13 +1,13 @@
 <ng-container *ngIf="isDataLoaded$ | async; else loadedTemplate">
   <div class="row mb-md-5">
-    <div class="col d-flex flex-row justify-content-center pt-2" *ngIf="locationManagement.enablePagination()">
+    <div class="col d-flex flex-row justify-content-center pt-2" *ngIf="enablePagination">
       <div class="location-pagination rounded-circle mr-1"
-        *ngFor="let location of locationManagement.locations; let i=index" [class.selected]="i===selectedIndex()">
+        *ngFor="let location of locationManagement.locations; let i=index" [class.selected]="i === selectedIndex">
       </div>
     </div>
     <div class="col-12 text-center">
       <div id="loc-name">
-        <button type="button" class="btn" *ngIf="locationManagement.enablePagination()" aria-label="Previous location"
+        <button type="button" class="btn" *ngIf="enablePagination" aria-label="Previous location"
           (click)="previous()">
           <i class="fas fa-chevron-left"></i>
         </button>
@@ -15,7 +15,7 @@
         <button type="button" class="btn p-1 mr-2" aria-label="Notification center" (click)="onClick()">
           <i class="far fa-bell" [class.ring]="ringing"></i>
         </button>
-        <button type="button" class="btn" *ngIf="locationManagement.enablePagination()" aria-label="Next location"
+        <button type="button" class="btn" *ngIf="enablePagination" aria-label="Next location"
           (click)="next()">
           <i class="fas fa-chevron-right"></i>
         </button>
@@ -28,7 +28,7 @@
   </div>
   <forecast class="row" [forecastDays]="forecastDays" [forecastNights]="forecastNights"
     [timezoneOffset]="timezoneOffset"></forecast>
-  <nearby *ngIf="cycleWeatherData?.list" class="row" [list]="cycleWeatherData.list" (open)="locationManagement.getData($event)"></nearby>
+  <nearby *ngIf="cycleWeatherData?.list" class="row" [list]="cycleWeatherData.list" (open)="openLocation($event)"></nearby>
   <button type="button" id="bookmark" class="btn btn-custom rounded-circle mr-4" aria-label="Add or delete bookmark"
     (click)="changeState()">
     <div [@addDeleteAnimation]="locationManagement.isBookmark ? 'delete' : 'add'" id="btn-label">+</div>

@@ -1,10 +1,10 @@
 <div class="clearfix">
   <div class="name float-left text-truncate" [class.ghost-name]="!location">{{location?.name}}</div>
-  <button type="button" class="close" aria-label="Delete" (click)="this.close.emit(null)" *ngIf="enableClosing">
+  <button type="button" class="close" aria-label="Delete" (click)="close.emit(null)" *ngIf="enableClosing">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
-<div class="d-inline-flex flex-row mb-md-2 w-100" (click)="open.next(null)">
+<div class="d-inline-flex flex-row mb-md-2 w-100" (click)="open.next(null)" style="cursor: pointer">
   <span class="temp" [class.ghost-temp]="!location">
     {{location?.main.temp | number:'1.0-0'}}<ng-container *ngIf="location?.main.temp">&deg;</ng-container>
   </span>

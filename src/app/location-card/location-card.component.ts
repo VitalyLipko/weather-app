@@ -1,11 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 
 import { WeatherData } from '../services/weather.service';
 
 @Component({
   selector: 'location-card',
   templateUrl: './location-card.component.html',
-  styleUrls: ['./location-card.component.scss']
+  styleUrls: ['./location-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LocationCardComponent implements OnInit {
   @Input() location: WeatherData;

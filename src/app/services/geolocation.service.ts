@@ -30,12 +30,7 @@ export class GeolocationService {
   set errorCode(code: number) {
     this._errorCode.next(code);
   }
-
-  isAvailable(): boolean {
-    if ('geolocation' in navigator) return true;
-    return false;
-  }
-
+  
   getCurrentPosition() {
     this.weather.isDataLoaded = false;
     navigator.geolocation.getCurrentPosition(

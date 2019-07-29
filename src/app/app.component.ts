@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, HostListener, Renderer2 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LowerCasePipe } from '@angular/common';
@@ -16,16 +16,16 @@ import { inputAnimation } from './animations';
 })
 export class AppComponent {
   nameLocation = new FormControl('', [Validators.minLength(2), Validators.required]);
-  isExpanded: boolean = false;
-  @ViewChild('inputRef', { static: true })
-  searchFormEl: ElementRef;
-  isBgTransparent: boolean = true;
+  isExpanded = false;
+  isBgTransparent = true;
   isShowed = true;
+
   constructor(
     public weather: WeatherService,
     private router: Router,
     private lowerCasePipe: LowerCasePipe,
-    public geolocation: GeolocationService
+    public geolocation: GeolocationService,
+    private renderer: Renderer2
   ) { }
 
   search() {
@@ -73,7 +73,7 @@ export class AppComponent {
   searchByEnter() {
     if (this.nameLocation.valid) {
       this.search();
-      this.searchFormEl.nativeElement.blur();
+      this.renderer.selectRootElement('#input-search').blur();
     }
   }
 
@@ -93,6 +93,6 @@ export class AppComponent {
   }
 
   controlNavbar() {
-    if (!this.isExpanded && !this.isShowed) this.isShowed = true;
+    this.isShowed = !this.isExpanded && !this.isShowed;
   }
 }

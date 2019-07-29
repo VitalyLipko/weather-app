@@ -10,16 +10,16 @@
         <div class="form-inline ml-auto">
             <div [@expandCollapseAnimation]="isExpanded ? 'expand' : 'collapse'" class="input-group"
                 (@expandCollapseAnimation.start)="isShowed=false" (@expandCollapseAnimation.done)="controlNavbar()">
-                <input id="input" class="form-control input-custom p-2" type="search" placeholder="Город"
+                <input id="input-search" class="form-control input-custom p-2" type="search" placeholder="Город"
                     (keyup.enter)="searchByEnter()" (focus)="expandCollapse()" (blur)="expandCollapse()"
-                    aria-label="Search" [formControl]="nameLocation" #inputRef>
+                    aria-label="Search" [formControl]="nameLocation">
                 <div class="input-group-append">
                     <button id="btn-search" class="btn btn-custom mr-2" type="button" aria-label="Search by location"
                         [disabled]="!nameLocation.valid" (click)="search()">
                         <i class="fas fa-search"></i>
                     </button>
                     <button class="btn btn-custom rounded-circle" type="button" aria-label="Search by "
-                        [disabled]="!this.geolocation.isAvailable()" (click)="this.geolocation.getCurrentPosition()">
+                        (click)="this.geolocation.getCurrentPosition()">
                         <i class="fas fa-map-marker-alt"></i>
                     </button>
                 </div>

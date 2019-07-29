@@ -26,7 +26,11 @@
   <div id="wrapper-param" class="collapse d-md-block">
     <div id="wind">
       <img src="assets/ico/parameters/wind.svg" alt="Иконка ветра" class="size-ico">
-      <span>{{weatherData?.wind.speed}} м/с, {{(weatherData?.wind.deg | weatherParams:'wind')}}</span>
+      <span>{{weatherData?.wind.speed}} м/с 
+        <ng-container *ngIf="weatherData?.wind.deg">
+          , {{weatherData.wind.deg | weatherParams:'wind'}}
+        </ng-container>
+      </span>
     </div>
     <div id="humidity">
       <img src="assets/ico/parameters/humidity.svg" alt="Иконка гигрометра" class="size-ico mr-2">

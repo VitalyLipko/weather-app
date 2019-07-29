@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { WeatherData, WeatherService, List } from 'src/app/services/weather.service';
 import { btnCollapseAnimation } from 'src/app/animations';
@@ -7,13 +7,14 @@ import { btnCollapseAnimation } from 'src/app/animations';
   selector: 'weather',
   templateUrl: './weather.component.html',
   styleUrls: ['./weather.component.scss'],
-  animations: [btnCollapseAnimation]
+  animations: [btnCollapseAnimation],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WeatherComponent implements OnInit {
   @Input() weatherData: WeatherData;
   @Input() timezoneOffset: string;
   @Input() forecastDay: List[];
-  isCollapsed: boolean = true;
+  isCollapsed = true;
   constructor(public weather: WeatherService) { }
 
   ngOnInit() {
