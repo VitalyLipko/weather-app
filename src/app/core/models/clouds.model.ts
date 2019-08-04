@@ -1,0 +1,3 @@
+interface Clouds {
+  all: number;
+}
