@@ -86,7 +86,7 @@ export class AppComponent {
   }
 
   private calcScrollPos() {
-    let pageY = window.pageYOffset || document.documentElement.scrollTop;
+    const pageY = window.pageYOffset || document.documentElement.scrollTop;
 
     if (pageY > 18) this.isBgTransparent = false;
     else this.isBgTransparent = true;

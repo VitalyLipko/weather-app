@@ -32,7 +32,6 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   isOpenedNotificationCenter = false;
   ringing: boolean;
   private timerIdNotify;
-  enablePagination: boolean;
   selectedIndex: number;
 
   @HostListener('window:load') getNewData() {
@@ -75,7 +74,6 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
               this.forecastDay = this.weather.getForecastDay(forecastData.list);
               this.forecastDays = this.weather.getForecastDays(this.forecastData.list, this.weather.forecastTz);
               this.forecastNights = this.weather.getForecastNights(this.forecastData.list, this.weather.forecastTz);
-              this.enablePagination = this.locationManagement.enablePagination();
               this.selectedIndex = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
 
               return this.weather.cycleWeatherDataStorage$;
@@ -115,7 +113,6 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
 
   changeState() {
     this.locationManagement.manage(this.weatherData);
-    this.enablePagination = this.locationManagement.enablePagination();
     this.selectedIndex = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
     this.isShown = !this.isShown;
     if (this.timerIdNotify) clearTimeout(this.timerIdNotify);

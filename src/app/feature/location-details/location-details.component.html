@@ -1,22 +1,23 @@
 <ng-container *ngIf="isDataLoaded$ | async; else loadedTemplate">
   <div class="row mb-md-5">
-    <div class="col d-flex flex-row justify-content-center pt-2" *ngIf="enablePagination">
+    <div locationsPaginator class="col d-flex flex-row justify-content-center pt-2" >
       <div class="location-pagination rounded-circle mr-1"
         *ngFor="let location of locationManagement.locations; let i=index" [class.selected]="i === selectedIndex">
       </div>
     </div>
     <div class="col-12 text-center">
       <div id="loc-name">
-        <button type="button" class="btn" *ngIf="enablePagination" aria-label="Previous location"
-          (click)="previous()">
+        <button locationsPaginator type="button" class="btn" aria-label="Previous location"
+          tooltip="Предыдущее место" (click)="previous()">
           <i class="fas fa-chevron-left"></i>
         </button>
         {{weatherData?.name}}
-        <button type="button" class="btn p-1 mr-2" aria-label="Notification center" (click)="onClick()">
+        <button type="button" class="btn p-1 mr-2" aria-label="Notification center" 
+          tooltip="Центр уведомлений" (click)="onClick()">
           <i class="far fa-bell" [class.ring]="ringing"></i>
         </button>
-        <button type="button" class="btn" *ngIf="enablePagination" aria-label="Next location"
-          (click)="next()">
+        <button locationsPaginator type="button" class="btn" aria-label="Next location"
+          tooltip="Следующее место" (click)="next()">
           <i class="fas fa-chevron-right"></i>
         </button>
       </div>
@@ -30,7 +31,7 @@
     [timezoneOffset]="timezoneOffset"></forecast>
   <nearby *ngIf="cycleWeatherData?.list" class="row" [list]="cycleWeatherData.list" (open)="openLocation($event)"></nearby>
   <button type="button" id="bookmark" class="btn btn-custom rounded-circle mr-4" aria-label="Add or delete bookmark"
-    (click)="changeState()">
+    [tooltip]="locationManagement.isBookmark ? 'Удалить' : 'Добавить'" (click)="changeState()">
     <div [@addDeleteAnimation]="locationManagement.isBookmark ? 'delete' : 'add'" id="btn-label">+</div>
   </button>
   <app-notification-center *ngIf="forecastDays?.length" id="notification-center-container" class="px-2"
@@ -58,7 +59,7 @@
     </ng-template>
     "Мои места"
   </span>
-  <button type="button" class="close" aria-label="Close" (click)="closeNotify()">
+  <button type="button" class="close" aria-label="Close" tooltip="Скрыть" (click)="closeNotify()">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>

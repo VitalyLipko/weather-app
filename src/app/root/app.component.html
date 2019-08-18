@@ -15,11 +15,11 @@
                     aria-label="Search" [formControl]="nameLocation">
                 <div class="input-group-append">
                     <button id="btn-search" class="btn btn-custom mr-2" type="button" aria-label="Search by location"
-                        [disabled]="!nameLocation.valid" (click)="search()">
+                        [tooltip]="nameLocation.valid ? 'Поиск' : ''" [disabled]="!nameLocation.valid" (click)="search()">
                         <i class="fas fa-search"></i>
                     </button>
                     <button class="btn btn-custom rounded-circle" type="button" aria-label="Search by "
-                        (click)="this.geolocation.getCurrentPosition()">
+                        tooltip="Моё местоположение" container="body" (click)="geolocation.getCurrentPosition()">
                         <i class="fas fa-map-marker-alt"></i>
                     </button>
                 </div>

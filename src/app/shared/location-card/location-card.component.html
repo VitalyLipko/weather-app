@@ -1,6 +1,7 @@
 <div class="clearfix">
   <div class="name float-left text-truncate" [class.ghost-name]="!location">{{location?.name}}</div>
-  <button type="button" class="close" aria-label="Delete" (click)="close.emit(null)" *ngIf="enableClosing">
+  <button type="button" class="close" aria-label="Delete" (click)="close.emit(null)" *ngIf="enableClosing"
+    tooltip="Удалить из списка">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>

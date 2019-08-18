@@ -29,7 +29,7 @@ export class LocationsComponent implements OnInit {
     if (localStorage.getItem('locations'))
       this.locationManagement.locations = JSON.parse(localStorage.getItem('locations'));
     if (this.locationManagement.locations.length) {
-      let idList: string = '';
+      let idList = '';
       this.locationManagement.locations.forEach((location, index, array) => {
         if (index !== (array.length - 1)) idList += location.id.toString() + ',';
         else idList += location.id.toString();

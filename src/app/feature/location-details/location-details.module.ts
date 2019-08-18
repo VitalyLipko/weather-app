@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 import { LocationDetailsComponent } from './location-details.component';
 import { ForecastComponent } from './forecast/forecast.component';
@@ -10,7 +11,7 @@ import { LocationCardComponent } from 'src/app/shared/location-card/location-car
 import { LocationsDetailsRoutingModule } from './locations-details-routing.module';
 
 @NgModule({
-  declarations: [ 
+  declarations: [
     LocationDetailsComponent,
     ForecastComponent,
     NearbyComponent,
@@ -19,7 +20,8 @@ import { LocationsDetailsRoutingModule } from './locations-details-routing.modul
   ],
   imports: [
     SharedModule,
-    LocationsDetailsRoutingModule
+    LocationsDetailsRoutingModule,
+    CollapseModule
   ],
   entryComponents: [
     LocationCardComponent

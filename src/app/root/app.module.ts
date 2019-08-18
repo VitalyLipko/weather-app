@@ -5,6 +5,7 @@ import { registerLocaleData, LowerCasePipe } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -24,7 +25,8 @@ registerLocaleData(localeRu);
     ReactiveFormsModule,
     BrowserAnimationsModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-    CoreModule
+    CoreModule,
+    TooltipModule.forRoot()
   ],
   providers:[
     LowerCasePipe, 

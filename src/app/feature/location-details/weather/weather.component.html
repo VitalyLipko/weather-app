@@ -17,13 +17,13 @@
   </div>
 </div>
 <div class="col-md-5 d-flex flex-column" id="additional-block">
-  <button type="button" class="btn btn-custom btn-block d-md-none mb-3 rounded-pill" data-toggle="collapse"
-    data-target="#wrapper-param" aria-expanded="false" aria-controls="wrapper-param" (click)="isCollapsed=!isCollapsed">
+  <button type="button" class="btn btn-custom btn-block d-md-none mb-3 rounded-pill" (click)="isCollapsed=!isCollapsed"
+    [attr.aria-expanded]="!isCollapsed" aria-controls="wrapper-param">
     <div [@expandCollapseAnimation]="isCollapsed ? 'collapse' : 'expand'">
       <i class="fas fa-chevron-down"></i>
     </div>
   </button>
-  <div id="wrapper-param" class="collapse d-md-block">
+  <div id="wrapper-param" class="d-md-block" [collapse]="isCollapsed" [isAnimated]="true">
     <div id="wind">
       <img src="assets/ico/parameters/wind.svg" alt="Иконка ветра" class="size-ico">
       <span>{{weatherData?.wind.speed}} м/с 

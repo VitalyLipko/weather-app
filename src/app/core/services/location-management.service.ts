@@ -31,7 +31,7 @@ export class LocationManagementService {
   }
 
   enablePagination(): boolean {
-    return (this.router.url.substr(0, 10) === '/locations' && this.locations.length > 1);
+    return (this.locations.length > 1 && this.router.url.includes('locations/'));
   }
 
   manage(weatherData: WeatherData) {
