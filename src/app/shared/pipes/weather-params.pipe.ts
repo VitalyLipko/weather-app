@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class WeatherParamsPipe implements PipeTransform {
 
-  transform(value: number, param: string): any {
+  transform(value: number, param: string): string | number {
     if (param === 'wind') {//Переводим метеорологические градусы (азимут точки, откуда дует ветер) в направление
       if (value === 0 || value === 360) return "С";
       else if (value > 0 && value < 90) return "СВ";

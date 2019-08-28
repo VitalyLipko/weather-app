@@ -4,7 +4,9 @@
     <div id="current-weather-description">
       <img src="assets/ico/weather-conditions/{{weatherData?.weather[0].icon}}.svg" alt="Иконка погоды"
         id="current-weather-conditions-ico" class="d-block">
-      <span id="current-weather-condition">{{weatherData?.weather[0].description}}</span>
+      <span id="current-weather-condition" class="text-truncate" [tooltip]="weatherData?.weather[0].description">
+        {{weatherData?.weather[0].description}}
+      </span>
     </div>
   </div>
   <div id="forecast-day" class="mb-3 mb-md-0">

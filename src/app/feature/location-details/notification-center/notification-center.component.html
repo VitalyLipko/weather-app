@@ -6,7 +6,7 @@
       ожидается {{changePressure}} атмосферного давления до
       {{pressureData[0].main.pressure | weatherParams:'pressure'}} мм.рт.ст.
     </div>
-    <div *ngIf="precipitationData[0]" class="alert notification px-2" role="alert">
+    <div *ngIf="precipitationData.length" class="alert notification px-2" role="alert">
       <ng-container *ngFor="let day of precipitationData">
         {{day.dt*1000 | date:'d MMMM':timezoneOffset:'ru'}}:
         {{day.weather[0].id | weatherParams: 'precipitation'}}. <br>

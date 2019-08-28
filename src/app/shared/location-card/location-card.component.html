@@ -1,5 +1,7 @@
 <div class="clearfix">
-  <div class="name float-left text-truncate" [class.ghost-name]="!location">{{location?.name}}</div>
+  <span class="name float-left text-truncate" [class.ghost-name]="!location" [tooltip]="location?.name">
+    {{location?.name}}
+  </span>
   <button type="button" class="close" aria-label="Delete" (click)="close.emit(null)" *ngIf="enableClosing"
     tooltip="Удалить из списка">
     <span aria-hidden="true">&times;</span>
@@ -13,7 +15,9 @@
     <ng-container *ngIf="location?.weather[0].icon; else ghostTemplate">
       <img src="assets/ico/weather-conditions/{{location?.weather[0].icon}}.svg" alt="Иконка погоды"
         class="conditions-ico d-block">
-      <div class="condition text-truncate">{{location?.weather[0].description}}</div>
+      <span class="condition text-truncate" [tooltip]="location?.weather[0].description">
+        {{location?.weather[0].description}}
+      </span>
     </ng-container>
     <ng-template #ghostTemplate>
       <div class="d-block ghost-icon"></div>

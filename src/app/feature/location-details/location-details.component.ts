@@ -11,6 +11,7 @@ import { WeatherData } from 'src/app/core/models/weather-data.model';
 import { ForecastData } from 'src/app/core/models/forecast-data.model';
 import { CycleWeatherData } from 'src/app/core/models/cycle-weather-data.model';
 import { List } from 'src/app/core/models/list.model';
+import { NotificationCenterService } from 'src/app/core/services/notification-center.service';
 
 @Component({
   selector: 'app-location-details',
@@ -30,9 +31,13 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   isDataLoaded$: Observable<boolean>;
   isShown = false;
   isOpenedNotificationCenter = false;
-  ringing: boolean;
   private timerIdNotify;
   selectedIndex: number;
+  pressureData: [List, number];
+  precipitationData: List[] = [];
+  tempData: [List, number];
+  windData: List;
+  notification = false;
 
   @HostListener('window:load') getNewData() {
     const id = Number(localStorage.getItem('lastId'));
@@ -45,7 +50,8 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
     public locationManagement: LocationManagementService,
     private seo: TagService,
     private renderer: Renderer2,
-    private router: Router
+    private router: Router,
+    private notificationCenterService: NotificationCenterService
   ) { }
 
   ngOnInit() {
@@ -75,6 +81,7 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
               this.forecastDays = this.weather.getForecastDays(this.forecastData.list, this.weather.forecastTz);
               this.forecastNights = this.weather.getForecastNights(this.forecastData.list, this.weather.forecastTz);
               this.selectedIndex = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
+              this.checkNotifications();
 
               return this.weather.cycleWeatherDataStorage$;
             })
@@ -141,5 +148,14 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   private scrollState(state: boolean) {
     if (state) this.renderer.addClass(document.body, 'show-notification-center');
     else this.renderer.removeClass(document.body, 'show-notification-center');
+  }
+
+  private checkNotifications() {
+    this.pressureData = this.notificationCenterService.pressureNotify(this.weatherData, this.forecastDays);
+    this.precipitationData = this.notificationCenterService.precipitationNotify(this.forecastDays);
+    this.tempData = this.notificationCenterService.tempNotify(this.weatherData.main.temp, this.forecastDays);
+    this.windData = this.notificationCenterService.windNotify(this.forecastDays);
+
+    this.notification = !!(this.pressureData || this.precipitationData.length || this.tempData || this.windData);
   }
 }

@@ -38,26 +38,24 @@ export const btnCollapseAnimation = trigger(
 
 export const notifyAnimation = trigger(
     'showHideAnimation', [
-        state('show', style({ bottom: 0 })),
-        state('hide', style({ bottom: '-100px' })),
-        transition('hide => show', [
-            animate(animatePreset1)
+        transition(':enter', [
+            style({ bottom: '-100px' }),
+            animate(animatePreset1, style({ bottom: 0 }))
         ]),
-        transition('show => hide', [
-            animate(animatePreset2)
+        transition(':leave', [
+            animate(animatePreset2, style({ bottom: '-100px' }))
         ])
     ]
 );
 
 export const notificationCenterAnimation = trigger(
     'openCloseAnimation', [
-        state('open', style({ left: 0 })),
-        state('close', style({ left: '-360px' })),
-        transition('close => open', [
-            animate(animatePreset1)
+        transition(':enter', [
+            style({ left: '-360px' }),
+            animate(animatePreset1, style({ left: 0 }))
         ]),
-        transition('open => close', [
-            animate(animatePreset2)
+        transition(':leave', [
+            animate(animatePreset2, style({ left: '-360px' }))
         ])
     ]
 );
