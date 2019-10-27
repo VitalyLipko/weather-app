@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { LocationSearchComponent } from './location-search.component';
 import { LocationsSearchRoutingModule } from './locations-search-routing.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -10,7 +11,8 @@ import { LocationsSearchRoutingModule } from './locations-search-routing.module'
   ],
   imports: [
     CommonModule,
-    LocationsSearchRoutingModule
+    LocationsSearchRoutingModule,
+    SharedModule
   ]
 })
 export class LocationSearchModule { }

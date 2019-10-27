@@ -1,13 +1,19 @@
-<div class="row justify-content-md-center pt-2">
-  <ng-container *ngIf="!locationManagement.locations.length; else locationsTemplate">
-    <p class="text-center">Список пуст! Добавьте хотя бы одно место с помощью кнопки "+" на странице прогноза.</p>
-  </ng-container>
-  <ng-template #locationsTemplate>
-    <ng-container *ngFor="let location of (groupWeatherData$ | async)?.list; last as isLast; trackBy: trackByFn">
-      <location-card class="location col-6 col-md-4 col-lg-3 col-xl-2 mb-3" [location]="location" [enableClosing]="true"
-        [class.mr-lg-2]="!isLast" [class.ghost]="!location" (open)="locationManagement.getData(location?.id)"
-        (close)="locationManagement.delete(location?.name)">
-      </location-card>
+<layout>
+  <div class="row justify-content-md-center pt-2">
+    <ng-container *ngIf="!locationManagement.locations.length; else locationsTemplate">
+      <p class="text-center">Список пуст! Добавьте хотя бы одно место с помощью кнопки "+" на странице прогноза.</p>
     </ng-container>
-  </ng-template>
-</div>
+    <ng-template #locationsTemplate>
+      <ng-container *ngFor="let location of (groupWeatherData$ | async)?.list; last as isLast; trackBy: trackByFn">
+        <location-card class="location col-6 col-md-4 col-lg-3 col-xl-2 mb-3" [location]="location" [enableClosing]="true"
+          [ngClass]="{
+            'mr-lg-2': !isLast,
+            'ghost': !location
+          }"
+          (open)="locationManagement.getData(location?.id)"
+          (close)="locationManagement.delete(location?.name)">
+        </location-card>
+      </ng-container>
+    </ng-template>
+  </div>
+</layout>

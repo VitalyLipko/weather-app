@@ -9,7 +9,7 @@
 </div>
 <div class="d-inline-flex flex-row mb-md-2 w-100" (click)="open.next(null)" style="cursor: pointer">
   <span class="temp" [class.ghost-temp]="!location">
-    {{location?.main.temp | number:'1.0-0'}}<ng-container *ngIf="location?.main.temp">&deg;</ng-container>
+    {{location?.main.temp | number:'1.0-0'}}<ng-container *ngIf="location">&deg;</ng-container>
   </span>
   <div>
     <ng-container *ngIf="location?.weather[0].icon; else ghostTemplate">

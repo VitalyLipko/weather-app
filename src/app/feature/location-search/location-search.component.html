@@ -1,42 +1,44 @@
-<ng-container *ngIf="isDataLoaded$ | async; else loadedTemplate">
-  <div class="row">
-    <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-5 offset-lg-3 col-lg-4 offset-lg-4 pt-5">
-      <p>
-        Для получения прогноза погоды по городам воспользуйтесь полем поиска.<br>
-        Для поиска по текущему местоположению нажмите кнопку <i class="fas fa-map-marker-alt"></i>.
-      </p>
-      <div class="alert alert-info" role="alert">
-        <h4 class="alert-heading">Важно</h4>
-        Поиск по городам доступен на английском языке, но по России можно искать и на русском.
-      </div>
-      <div *ngIf="errorCode$ | async as errorCode" class="alert alert-danger" role="alert">
-        <h4 class="alert-heading">Геолокация</h4>
-        <ng-container [ngSwitch]="errorCode">
-          <ng-container *ngSwitchCase="geolocation.permissionDenied">
-            Доступ запрещен.
+<layout>
+  <ng-container *ngIf="isDataLoaded$ | async; else loadedTemplate">
+    <div class="row">
+      <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-5 offset-lg-3 col-lg-4 offset-lg-4 pt-5">
+        <p>
+          Для получения прогноза погоды по городам воспользуйтесь полем поиска.<br>
+          Для поиска по текущему местоположению нажмите кнопку <i class="fas fa-map-marker-alt"></i>.
+        </p>
+        <div class="alert alert-info" role="alert">
+          <h4 class="alert-heading">Важно</h4>
+          Поиск по городам доступен на английском языке, но по России можно искать и на русском.
+        </div>
+        <div *ngIf="errorCode$ | async as errorCode" class="alert alert-danger" role="alert">
+          <h4 class="alert-heading">Геолокация</h4>
+          <ng-container [ngSwitch]="errorCode">
+            <ng-container *ngSwitchCase="geolocation.permissionDenied">
+              Доступ запрещен.
+            </ng-container>
+            <ng-container *ngSwitchCase="geolocation.positionUnavaliable">
+              Неудается определить местоположение.
+            </ng-container>
+            <ng-container *ngSwitchCase="geolocation.timeout">
+              Достигнут таймаут запроса местоположения.
+            </ng-container>
           </ng-container>
-          <ng-container *ngSwitchCase="geolocation.positionUnavaliable">
-            Неудается определить местоположение.
+        </div>
+        <div *ngIf="this.errorStatus$ | async as errorStatus" class="alert alert-danger" role="alert">
+          <h4 class="alert-heading">Поиск</h4>
+          <ng-container [ngSwitch]="errorStatus">
+            <ng-container *ngSwitchCase="404">Город не найден.</ng-container>
+            <ng-container *ngSwitchDefault>Неизвестная ошибка.</ng-container>
           </ng-container>
-          <ng-container *ngSwitchCase="geolocation.timeout">
-            Достигнут таймаут запроса местоположения.
-          </ng-container>
-        </ng-container>
-      </div>
-      <div *ngIf="this.errorStatus$ | async as errorStatus" class="alert alert-danger" role="alert">
-        <h4 class="alert-heading">Поиск</h4>
-        <ng-container [ngSwitch]="errorStatus">
-          <ng-container *ngSwitchCase="404">Город не найден.</ng-container>
-          <ng-container *ngSwitchDefault>Неизвестная ошибка.</ng-container>
-        </ng-container>
+        </div>
       </div>
     </div>
-  </div>
-</ng-container>
-<ng-template #loadedTemplate>
-  <div class="d-flex justify-content-center pt-5">
-    <div class="spinner-border text-light" role="status">
-      <span class="sr-only">Loading...</span>
+  </ng-container>
+  <ng-template #loadedTemplate>
+    <div class="d-flex justify-content-center pt-5">
+      <div class="spinner-border text-light" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
     </div>
-  </div>
-</ng-template>
+  </ng-template>
+</layout>

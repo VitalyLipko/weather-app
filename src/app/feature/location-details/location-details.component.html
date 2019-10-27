@@ -1,64 +1,66 @@
-<ng-container *ngIf="isDataLoaded$ | async; else loadedTemplate">
-  <div class="row mb-md-5">
-    <div locationsPaginator class="col d-flex flex-row justify-content-center pt-2" >
-      <div class="location-pagination rounded-circle mr-1"
-        *ngFor="let location of locationManagement.locations; let i=index" [class.selected]="i === selectedIndex">
+<layout>
+  <ng-container *ngIf="isDataLoaded$ | async; else loadedTemplate">
+    <div class="row mb-md-5">
+      <div locationsPaginator class="col d-flex flex-row justify-content-center pt-2" >
+        <div class="location-pagination rounded-circle mr-1"
+          *ngFor="let location of locationManagement.locations; let i=index" [class.selected]="i === selectedIndex">
+        </div>
+      </div>
+      <div class="col-12 text-center">
+        <div id="loc-name">
+          <button locationsPaginator type="button" class="btn" aria-label="Previous location"
+            tooltip="Предыдущее место" (click)="previous()">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          {{weatherData?.name}}
+          <button type="button" class="btn p-1 mr-2" aria-label="Notification center" 
+            tooltip="Центр уведомлений" (click)="onClick()">
+            <i class="far fa-bell" [class.ring]="notification"></i>
+          </button>
+          <button locationsPaginator type="button" class="btn" aria-label="Next location"
+            tooltip="Следующее место" (click)="next()">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        <span class="d-block">Прогноз составлен:
+          {{weatherData?.dt*1000 | date:'d MMMM, HH:mm':timezoneOffset:'ru'}}</span>
+      </div>
+      <weather [weatherData]="weatherData" [timezoneOffset]="timezoneOffset" [forecastDay]="forecastDay"
+        class="col-12 d-flex flex-column flex-md-row p-0"></weather>
+    </div>
+    <forecast class="row" [forecastDays]="forecastDays" [forecastNights]="forecastNights"
+      [timezoneOffset]="timezoneOffset"></forecast>
+    <nearby *ngIf="cycleWeatherData?.list" class="row" [list]="cycleWeatherData.list" (open)="openLocation($event)">  
+    </nearby>
+    <button type="button" id="bookmark" class="btn btn-custom rounded-circle mr-4" aria-label="Add or delete bookmark"
+      [tooltip]="locationManagement.isBookmark ? 'Удалить' : 'Добавить'" (click)="changeState()">
+      <div [@addDeleteAnimation]="locationManagement.isBookmark ? 'delete' : 'add'" id="btn-label">+</div>
+    </button>
+    <app-notification-center *ngIf="isOpenedNotificationCenter" id="notification-center-container" 
+      class="px-2" @openCloseAnimation [pressureData]="pressureData" [precipitationData]="precipitationData" [tempData]="tempData"
+      [windData]="windData" [notification]="notification" [timezoneOffset]="timezoneOffset"  (close)="onClick()">
+    </app-notification-center>
+  </ng-container>
+  <ng-template #loadedTemplate>
+    <div class="d-flex justify-content-center pt-5">
+      <div class="spinner-border text-light" role="status">
+        <span class="sr-only">Loading...</span>
       </div>
     </div>
-    <div class="col-12 text-center">
-      <div id="loc-name">
-        <button locationsPaginator type="button" class="btn" aria-label="Previous location"
-          tooltip="Предыдущее место" (click)="previous()">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        {{weatherData?.name}}
-        <button type="button" class="btn p-1 mr-2" aria-label="Notification center" 
-          tooltip="Центр уведомлений" (click)="onClick()">
-          <i class="far fa-bell" [class.ring]="notification"></i>
-        </button>
-        <button locationsPaginator type="button" class="btn" aria-label="Next location"
-          tooltip="Следующее место" (click)="next()">
-          <i class="fas fa-chevron-right"></i>
-        </button>
-      </div>
-      <span class="d-block">Прогноз составлен:
-        {{weatherData?.dt*1000 | date:'d MMMM, HH:mm':timezoneOffset:'ru'}}</span>
-    </div>
-    <weather [weatherData]="weatherData" [timezoneOffset]="timezoneOffset" [forecastDay]="forecastDay"
-      class="col-12 d-flex flex-column flex-md-row p-0"></weather>
+  </ng-template>
+  <div *ngIf="isShown" @showHideAnimation id="notifyMsg" class="d-flex justify-content-center align-items-center fixed-bottom py-2 px-1">
+    <span class="text-center mr-3">
+      {{weatherData?.name}}
+      <ng-container *ngIf="locationManagement.isBookmark; else deleteTemplate">
+        добавлен в раздел
+      </ng-container>
+      <ng-template #deleteTemplate>
+        удален из раздела
+      </ng-template>
+      "Мои места"
+    </span>
+    <button type="button" class="close" aria-label="Close" tooltip="Скрыть" (click)="closeNotify()">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
-  <forecast class="row" [forecastDays]="forecastDays" [forecastNights]="forecastNights"
-    [timezoneOffset]="timezoneOffset"></forecast>
-  <nearby *ngIf="cycleWeatherData?.list" class="row" [list]="cycleWeatherData.list" (open)="openLocation($event)">  
-  </nearby>
-  <button type="button" id="bookmark" class="btn btn-custom rounded-circle mr-4" aria-label="Add or delete bookmark"
-    [tooltip]="locationManagement.isBookmark ? 'Удалить' : 'Добавить'" (click)="changeState()">
-    <div [@addDeleteAnimation]="locationManagement.isBookmark ? 'delete' : 'add'" id="btn-label">+</div>
-  </button>
-  <app-notification-center *ngIf="isOpenedNotificationCenter" id="notification-center-container" 
-    class="px-2" @openCloseAnimation [pressureData]="pressureData" [precipitationData]="precipitationData" [tempData]="tempData"
-    [windData]="windData" [notification]="notification" [timezoneOffset]="timezoneOffset"  (close)="onClick()">
-  </app-notification-center>
-</ng-container>
-<ng-template #loadedTemplate>
-  <div class="d-flex justify-content-center pt-5">
-    <div class="spinner-border text-light" role="status">
-      <span class="sr-only">Loading...</span>
-    </div>
-  </div>
-</ng-template>
-<div *ngIf="isShown" @showHideAnimation id="notifyMsg" class="d-flex justify-content-center align-items-center fixed-bottom py-2 px-1">
-  <span class="text-center mr-3">
-    {{weatherData?.name}}
-    <ng-container *ngIf="locationManagement.isBookmark; else deleteTemplate">
-      добавлен в раздел
-    </ng-container>
-    <ng-template #deleteTemplate>
-      удален из раздела
-    </ng-template>
-    "Мои места"
-  </span>
-  <button type="button" class="close" aria-label="Close" tooltip="Скрыть" (click)="closeNotify()">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
+</layout>
