@@ -14,7 +14,7 @@ import { List } from 'src/app/core/models/list.model';
 import { NotificationCenterService } from 'src/app/core/services/notification-center.service';
 
 @Component({
-  selector: 'app-location-details',
+  selector: 'wa-location-details',
   templateUrl: './location-details.component.html',
   styleUrls: ['./location-details.component.scss'],
   animations: [bookmarkAnimation, notifyAnimation, notificationCenterAnimation]
@@ -41,8 +41,11 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
 
   @HostListener('window:load') getNewData() {
     const id = Number(localStorage.getItem('lastId'));
-    if (id) this.locationManagement.getData(id);
-    else this.router.navigate(['/search']);
+    if (id) {
+      this.locationManagement.getData(id);
+    } else {
+      this.router.navigate(['/search']);
+    }
   }
 
   constructor(
@@ -73,8 +76,11 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
 
           return this.weather.forecastDataStorage$.pipe(
             switchMap(forecastData => {
-              if (this.weatherData.timezone >= 0) this.timezoneOffset = '+' + (this.weatherData.timezone / 3600).toString();
-              else this.timezoneOffset = (this.weatherData.timezone / 3600).toString();
+              if (this.weatherData.timezone >= 0) {
+                this.timezoneOffset = '+' + (this.weatherData.timezone / 3600).toString();
+              } else {
+                this.timezoneOffset = (this.weatherData.timezone / 3600).toString();
+              }
               this.weather.forecastTz = this.weatherData.timezone / 3600;
               this.forecastData = forecastData;
               this.forecastDay = this.weather.getForecastDay(forecastData.list);
@@ -93,27 +99,41 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
 
   @HostListener('window:beforeunload')
   ngOnDestroy() {
-    if (this.subscriptions) this.subscriptions.unsubscribe();
-    if (this.timerIdNotify) clearTimeout(this.timerIdNotify);
-    if (this.isOpenedNotificationCenter) this.renderer.removeClass(document.body, 'show-notification-center');
+    if (this.subscriptions) {
+      this.subscriptions.unsubscribe();
+    }
+    if (this.timerIdNotify) {
+      clearTimeout(this.timerIdNotify);
+    }
+    if (this.isOpenedNotificationCenter) {
+      this.renderer.removeClass(document.body, 'show-notification-center');
+    }
   }
 
   next() {
     let i = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
-    if (i === -1) i = 0;
-    if (i !== (this.locationManagement.locations.length - 1))
+    if (i === -1) {
+      i = 0;
+    }
+    if (i !== (this.locationManagement.locations.length - 1)) {
       this.locationManagement.getData(this.locationManagement.locations[++i].id);
-    else this.locationManagement.getData(this.locationManagement.locations[0].id);
+    } else {
+      this.locationManagement.getData(this.locationManagement.locations[0].id);
+    }
     this.isOpenedNotificationCenter = false;
     this.scrollState(this.isOpenedNotificationCenter);
   }
 
   previous() {
     let i = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
-    if (i === -1) i = 0;
-    if (i === 0)
+    if (i === -1) {
+      i = 0;
+    }
+    if (i === 0) {
       this.locationManagement.getData(this.locationManagement.locations[this.locationManagement.locations.length - 1].id);
-    else this.locationManagement.getData(this.locationManagement.locations[--i].id);
+    } else {
+      this.locationManagement.getData(this.locationManagement.locations[--i].id);
+    }
     this.isOpenedNotificationCenter = false;
     this.scrollState(this.isOpenedNotificationCenter);
   }
@@ -122,8 +142,12 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
     this.locationManagement.manage(this.weatherData);
     this.selectedIndex = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
     this.isShown = !this.isShown;
-    if (this.timerIdNotify) clearTimeout(this.timerIdNotify);
-    if (!this.isShown) this.isShown = true;
+    if (this.timerIdNotify) {
+      clearTimeout(this.timerIdNotify);
+    }
+    if (!this.isShown) {
+      this.isShown = true;
+    }
     this.timerIdNotify = setTimeout(() => {
       this.closeNotify();
     }, 5000);
@@ -146,8 +170,11 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   }
 
   private scrollState(state: boolean) {
-    if (state) this.renderer.addClass(document.body, 'show-notification-center');
-    else this.renderer.removeClass(document.body, 'show-notification-center');
+    if (state) {
+      this.renderer.addClass(document.body, 'show-notification-center');
+    } else {
+      this.renderer.removeClass(document.body, 'show-notification-center');
+    }
   }
 
   private checkNotifications() {

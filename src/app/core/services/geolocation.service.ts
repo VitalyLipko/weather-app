@@ -25,7 +25,7 @@ export class GeolocationService {
   set errorCode(code: number) {
     this._errorCode.next(code);
   }
-  
+
   getCurrentPosition() {
     this.weather.isDataLoaded = false;
     navigator.geolocation.getCurrentPosition(
@@ -57,7 +57,7 @@ export class GeolocationService {
           forecastData => {
             this.weather.saveForecastData(forecastData);
             this.weather.isDataLoaded = true;
-            this.router.navigate([`${this.lowerCasePipe.transform(forecastData.city.name)}`])
+            this.router.navigate([`${this.lowerCasePipe.transform(forecastData.city.name)}`]);
           },
           error => {
             console.error(error.message);

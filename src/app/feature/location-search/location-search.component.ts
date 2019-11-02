@@ -7,7 +7,7 @@ import { WeatherService } from 'src/app/core/services/weather.service';
 import { TagService } from 'src/app/core/services/tag.service';
 
 @Component({
-  selector: 'app-location-search',
+  selector: 'wa-location-search',
   templateUrl: './location-search.component.html',
   styleUrls: ['./location-search.component.scss']
 })

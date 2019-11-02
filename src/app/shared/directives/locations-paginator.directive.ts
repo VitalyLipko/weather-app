@@ -3,7 +3,7 @@ import { Directive, OnInit, ElementRef, Renderer2 } from '@angular/core';
 import { LocationManagementService } from 'src/app/core/services/location-management.service';
 
 @Directive({
-  selector: '[locationsPaginator]'
+  selector: '[waLocationsPaginator]'
 })
 export class LocationsPaginatorDirective implements OnInit {
 

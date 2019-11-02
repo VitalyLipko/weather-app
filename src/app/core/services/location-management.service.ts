@@ -35,7 +35,7 @@ export class LocationManagementService {
   }
 
   manage(weatherData: WeatherData) {
-    let location: Locations = {
+    const location: Locations = {
       id: 0,
       name: ''
     };
@@ -46,14 +46,14 @@ export class LocationManagementService {
       if (this.locations.length < 15) {
         this.locations.push(location);
         this.locations = this.locations.sort((a, b) => {
-          if (a.name > b.name) return 1;
-          if (a.name < b.name) return -1;
+          if (a.name > b.name) { return 1; }
+          if (a.name < b.name) { return -1; }
           return 0;
         });
         localStorage.setItem('locations', JSON.stringify(this.locations));
-      } else this.isBookmark = false;
+      } else { this.isBookmark = false; }
     } else {
-      if (this.locations.length == 1) {
+      if (this.locations.length === 1) {
         this.locations = [];
         localStorage.removeItem('locations');
       } else {
@@ -64,7 +64,7 @@ export class LocationManagementService {
   }
 
   getData(id: number) {
-    if (!id) return;
+    if (!id) { return; }
     this.weather.isDataLoaded = false;
     this.weather.getWeatherDataById(id).pipe(
       tap(
@@ -81,9 +81,11 @@ export class LocationManagementService {
           forecastData => {
             this.weather.saveForecastData(forecastData);
             this.weather.isDataLoaded = true;
-            if (this.router.url.substr(1, 9) === 'locations' && this.isLocationExist(forecastData.city.name))
+            if (this.router.url.substr(1, 9) === 'locations' && this.isLocationExist(forecastData.city.name)) {
               this.router.navigate([`/locations/${this.lowerCasePipe.transform(forecastData.city.name)}`]);
-            else this.router.navigate([`${this.lowerCasePipe.transform(forecastData.city.name)}`]);
+            } else {
+              this.router.navigate([`${this.lowerCasePipe.transform(forecastData.city.name)}`]);
+            }
           },
           error => {
             console.error(error.message);
@@ -106,8 +108,10 @@ export class LocationManagementService {
   }
 
   delete(name: string) {
-    if (!name) return;
-    if (this.locations.length == 1) {
+    if (!name) {
+      return;
+    }
+    if (this.locations.length === 1) {
       this.locations = [];
       localStorage.removeItem('locations');
     } else {

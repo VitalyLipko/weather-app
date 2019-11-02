@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy
 import { WeatherData } from 'src/app/core/models/weather-data.model';
 
 @Component({
-  selector: 'location-card',
+  selector: 'wa-location-card',
   templateUrl: './location-card.component.html',
   styleUrls: ['./location-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

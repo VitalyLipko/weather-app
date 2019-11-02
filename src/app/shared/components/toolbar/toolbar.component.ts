@@ -9,7 +9,7 @@ import { GeolocationService } from 'src/app/core/services/geolocation.service';
 import { inputAnimation } from 'src/app/root/animations';
 
 @Component({
-  selector: 'toolbar',
+  selector: 'wa-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
   animations: [inputAnimation]

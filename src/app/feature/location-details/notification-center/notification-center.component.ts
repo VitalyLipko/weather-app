@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy
 import { List } from 'src/app/core/models/list.model';
 
 @Component({
-  selector: 'app-notification-center',
+  selector: 'wa-notification-center',
   templateUrl: './notification-center.component.html',
   styleUrls: ['./notification-center.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

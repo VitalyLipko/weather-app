@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy
 import { WeatherData } from 'src/app/core/models/weather-data.model';
 
 @Component({
-  selector: 'nearby',
+  selector: 'wa-nearby',
   templateUrl: './nearby.component.html',
   styleUrls: ['./nearby.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

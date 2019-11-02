@@ -26,8 +26,8 @@ registerLocaleData(localeRu);
     CoreModule,
     TooltipModule.forRoot()
   ],
-  providers:[
-    LowerCasePipe, 
+  providers: [
+    LowerCasePipe,
     WeatherParamsPipe
   ],
   bootstrap: [

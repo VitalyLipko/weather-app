@@ -9,7 +9,7 @@ import { GroupWeatherData } from 'src/app/core/models/group-weather-data.model';
 import { WeatherData } from 'src/app/core/models/weather-data.model';
 
 @Component({
-  selector: 'app-locations',
+  selector: 'wa-locations',
   templateUrl: './locations.component.html',
   styleUrls: ['./locations.component.scss']
 })
@@ -26,15 +26,20 @@ export class LocationsComponent implements OnInit {
     this.seo.setPageTitle('Weather App | Мои места');
     this.seo.setPageDescription('');
     this.seo.setMetaRobots('noindex, nofollow');
-    if (localStorage.getItem('locations'))
+    if (localStorage.getItem('locations')) {
       this.locationManagement.locations = JSON.parse(localStorage.getItem('locations'));
+    }
     if (this.locationManagement.locations.length) {
       let idList = '';
       this.locationManagement.locations.forEach((location, index, array) => {
-        if (index !== (array.length - 1)) idList += location.id.toString() + ',';
-        else idList += location.id.toString();
+        if (index !== (array.length - 1)) {
+          idList += location.id.toString() + ',';
+        } else {
+          idList += location.id.toString();
+        }
       });
       this.groupWeatherData$ = this.weather.getGroupWeatherData(idList).pipe(
+        // tslint:disable-next-line: whitespace
         startWith(<GroupWeatherData>{ cnt: 0, list: new Array<WeatherData>(this.locationManagement.locations.length) }),
         tap(data => this.locationManagement.groupWeatherData = data)
       );

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { TagService } from 'src/app/core/services/tag.service';
 
 @Component({
-  selector: 'app-page404',
+  selector: 'wa-page404',
   templateUrl: './page404.component.html',
   styles: [
     `

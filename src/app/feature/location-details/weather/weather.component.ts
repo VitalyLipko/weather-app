@@ -7,7 +7,7 @@ import { WeatherData } from 'src/app/core/models/weather-data.model';
 import { List } from 'src/app/core/models/list.model';
 
 @Component({
-  selector: 'weather',
+  selector: 'wa-weather',
   templateUrl: './weather.component.html',
   styleUrls: ['./weather.component.scss'],
   animations: [btnCollapseAnimation],

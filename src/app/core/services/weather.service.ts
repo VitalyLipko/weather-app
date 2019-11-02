@@ -73,7 +73,7 @@ export class WeatherService {
     forecast: 'https://api.openweathermap.org/data/2.5/forecast?',
     group: 'https://api.openweathermap.org/data/2.5/group?',
     cycle: 'https://api.openweathermap.org/data/2.5/find?',
-  }
+  };
 
   private weatherDataStorage = new ReplaySubject<WeatherData>(1, 2000);
   private forecastDataStorage = new ReplaySubject<ForecastData>(1, 2000);
@@ -99,12 +99,14 @@ export class WeatherService {
 
   getWeatherDataByPosition(position: Position): Observable<WeatherData> {
     return this.http.get<WeatherData>(
+      // tslint:disable-next-line: max-line-length
       `${this.urlApi.weather}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${apiKey}`
     ).pipe(retryWithBackoff(2));
   }
 
   getForecastDataByPosition(position: Position): Observable<ForecastData> {
     return this.http.get<ForecastData>(
+      // tslint:disable-next-line: max-line-length
       `${this.urlApi.forecast}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${apiKey}`
     ).pipe(retryWithBackoff(2));
   }
@@ -129,6 +131,7 @@ export class WeatherService {
 
   getCycleWeatherData(position: Position): Observable<CycleWeatherData> {
     return this.http.get<CycleWeatherData>(
+      // tslint:disable-next-line: max-line-length
       `${this.urlApi.cycle}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&cnt=6&appid=${apiKey}`
     ).pipe(retryWithBackoff(2));
   }
@@ -157,41 +160,53 @@ export class WeatherService {
     this.cycleWeatherDataStorage.next(data);
   }
 
-  //Получаем из списка пятидневного прогноза прогноз на дневные часы
+  // Получаем из списка пятидневного прогноза прогноз на дневные часы
   getForecastDays(forecastList: List[], offset: number): List[] {
-    let forecastDays: List[] = [];
+    const forecastDays: List[] = [];
     let hours: number;
 
-    for (let forecast of forecastList) {
-      let test = new Date(forecast.dt * 1000);
+    for (const forecast of forecastList) {
+      const test = new Date(forecast.dt * 1000);
       hours = test.getUTCHours() + offset;
-      if (hours < 0) hours += 24;
-      else if (hours > 23) hours -= 24;
-      if (hours === 12 || hours === 13 || hours === 14) forecastDays.push(forecast);
+      if (hours < 0) {
+        hours += 24;
+      } else if (hours > 23) {
+        hours -= 24;
+      }
+
+      if (hours === 12 || hours === 13 || hours === 14) {
+        forecastDays.push(forecast);
+      }
     }
 
     return forecastDays;
   }
-  //Получаем из списка пятидневного прогноза прогноз на ночные часы
+  // Получаем из списка пятидневного прогноза прогноз на ночные часы
   getForecastNights(forecastList: List[], offset: number): List[] {
-    let forecastNight: List[] = [];
+    const forecastNight: List[] = [];
     let hours: number;
 
-    for (let forecast of forecastList) {
-      let test = new Date(forecast.dt * 1000);
+    for (const forecast of forecastList) {
+      const test = new Date(forecast.dt * 1000);
       hours = test.getUTCHours() + offset;
-      if (hours < 0) hours += 24;
-      else if (hours > 23) hours -= 24;
-      if (hours === 0 || hours === 1 || hours === 2) forecastNight.push(forecast);
+      if (hours < 0) {
+        hours += 24;
+      } else if (hours > 23) {
+        hours -= 24;
+      }
+
+      if (hours === 0 || hours === 1 || hours === 2) {
+        forecastNight.push(forecast);
+      }
     }
 
     return forecastNight;
   }
 
-  //Получаем прогноз на ближайшие 24 часа (интервал 3 часа)
+  // Получаем прогноз на ближайшие 24 часа (интервал 3 часа)
   getForecastDay(forecastList: List[]): List[] {
-    let forecastDay: List[] = [];
-    let i: number = 0;
+    const forecastDay: List[] = [];
+    let i = 0;
 
     while (i < 8) {
       forecastDay.push(forecastList[i++]);

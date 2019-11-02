@@ -1,4 +1,4 @@
-import { Coord } from "./coord.model";
+import { Coord } from './coord.model';
 
 export interface City {
   id: number;
