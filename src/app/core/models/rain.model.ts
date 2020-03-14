@@ -1,4 +1,4 @@
-interface Rain {
+export interface Rain {
   one_h: number;
   three_h: number;
 }

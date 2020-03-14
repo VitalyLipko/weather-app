@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { startWith } from 'rxjs/operators';
-
-import { GeolocationService } from 'src/app/core/services/geolocation.service';
-import { WeatherService } from 'src/app/core/services/weather.service';
-import { TagService } from 'src/app/core/services/tag.service';
+import {
+  GeolocationService,
+  WeatherService,
+  TagService,
+} from 'src/app/core/services';
 
 @Component({
   selector: 'wa-location-search',
   templateUrl: './location-search.component.html',
-  styleUrls: ['./location-search.component.scss']
+  styleUrls: ['./location-search.component.scss'],
 })
 export class LocationSearchComponent implements OnInit {
   errorStatus$: Observable<number>;
@@ -19,8 +20,8 @@ export class LocationSearchComponent implements OnInit {
   constructor(
     public geolocation: GeolocationService,
     private weather: WeatherService,
-    private seo: TagService
-  ) { }
+    private seo: TagService,
+  ) {}
 
   ngOnInit() {
     this.seo.setPageTitle('Weather App | Страница поиска');

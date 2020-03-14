@@ -1,23 +1,38 @@
-import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  HostListener,
+  Renderer2,
+} from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
-import { bookmarkAnimation, notifyAnimation, notificationCenterAnimation } from 'src/app/root/animations';
-import { WeatherService } from 'src/app/core/services/weather.service';
-import { LocationManagementService } from 'src/app/core/services/location-management.service';
-import { TagService } from 'src/app/core/services/tag.service';
-import { WeatherData } from 'src/app/core/models/weather-data.model';
-import { ForecastData } from 'src/app/core/models/forecast-data.model';
-import { CycleWeatherData } from 'src/app/core/models/cycle-weather-data.model';
-import { List } from 'src/app/core/models/list.model';
-import { NotificationCenterService } from 'src/app/core/services/notification-center.service';
+import {
+  bookmarkAnimation,
+  notifyAnimation,
+  notificationCenterAnimation,
+} from 'src/app/root/animations';
+
+import {
+  WeatherData,
+  ForecastData,
+  CycleWeatherData,
+  List,
+} from 'src/app/core/models';
+import {
+  WeatherService,
+  LocationManagementService,
+  TagService,
+  NotificationCenterService,
+} from 'src/app/core/services';
 
 @Component({
   selector: 'wa-location-details',
   templateUrl: './location-details.component.html',
   styleUrls: ['./location-details.component.scss'],
-  animations: [bookmarkAnimation, notifyAnimation, notificationCenterAnimation]
+  animations: [bookmarkAnimation, notifyAnimation, notificationCenterAnimation],
 })
 export class LocationDetailsComponent implements OnInit, OnDestroy {
   weatherData: WeatherData;
@@ -54,46 +69,71 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
     private seo: TagService,
     private renderer: Renderer2,
     private router: Router,
-    private notificationCenterService: NotificationCenterService
-  ) { }
+    private notificationCenterService: NotificationCenterService,
+  ) {}
 
   ngOnInit() {
     this.isDataLoaded$ = this.weather.isDataLoaded$;
     this.subscriptions.add(
-      this.weather.weatherDataStorage$.pipe(
-        switchMap(weatherData => {
-          this.closeNotify();
-          window.scrollTo(0, 0);
-          this.weatherData = weatherData;
-          if (localStorage.getItem('locations')) {
-            this.locationManagement.locations = JSON.parse(localStorage.getItem('locations'));
-          }
-          this.locationManagement.isBookmark = this.locationManagement.isLocationExist(weatherData.name);
-          this.seo.setPageTitle('Weather App | Прогноз погоды в ' + weatherData.name);
-          this.seo.setPageDescription('Прогноз текущей погоды, почасовой и пятидневный.');
-          this.seo.setMetaRobots('index, follow');
-          localStorage.setItem('lastId', weatherData.id.toString());
+      this.weather.weatherDataStorage$
+        .pipe(
+          switchMap(weatherData => {
+            this.closeNotify();
+            window.scrollTo(0, 0);
+            this.weatherData = weatherData;
+            if (localStorage.getItem('locations')) {
+              this.locationManagement.locations = JSON.parse(
+                localStorage.getItem('locations'),
+              );
+            }
+            this.locationManagement.isBookmark = this.locationManagement.isLocationExist(
+              weatherData.name,
+            );
+            this.seo.setPageTitle(
+              'Weather App | Прогноз погоды в ' + weatherData.name,
+            );
+            this.seo.setPageDescription(
+              'Прогноз текущей погоды, почасовой и пятидневный.',
+            );
+            this.seo.setMetaRobots('index, follow');
+            localStorage.setItem('lastId', weatherData.id.toString());
 
-          return this.weather.forecastDataStorage$.pipe(
-            switchMap(forecastData => {
-              if (this.weatherData.timezone >= 0) {
-                this.timezoneOffset = '+' + (this.weatherData.timezone / 3600).toString();
-              } else {
-                this.timezoneOffset = (this.weatherData.timezone / 3600).toString();
-              }
-              this.weather.forecastTz = this.weatherData.timezone / 3600;
-              this.forecastData = forecastData;
-              this.forecastDay = this.weather.getForecastDay(forecastData.list);
-              this.forecastDays = this.weather.getForecastDays(this.forecastData.list, this.weather.forecastTz);
-              this.forecastNights = this.weather.getForecastNights(this.forecastData.list, this.weather.forecastTz);
-              this.selectedIndex = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
-              this.checkNotifications();
+            return this.weather.forecastDataStorage$.pipe(
+              switchMap(forecastData => {
+                if (this.weatherData.timezone >= 0) {
+                  this.timezoneOffset =
+                    '+' + (this.weatherData.timezone / 3600).toString();
+                } else {
+                  this.timezoneOffset = (
+                    this.weatherData.timezone / 3600
+                  ).toString();
+                }
+                this.weather.forecastTz = this.weatherData.timezone / 3600;
+                this.forecastData = forecastData;
+                this.forecastDay = this.weather.getForecastDay(
+                  forecastData.list,
+                );
+                this.forecastDays = this.weather.getForecastDays(
+                  this.forecastData.list,
+                  this.weather.forecastTz,
+                );
+                this.forecastNights = this.weather.getForecastNights(
+                  this.forecastData.list,
+                  this.weather.forecastTz,
+                );
+                this.selectedIndex = this.locationManagement.locations.findIndex(
+                  x => x.name === this.weatherData.name,
+                );
+                this.checkNotifications();
 
-              return this.weather.cycleWeatherDataStorage$;
-            })
-          );
-        })
-      ).subscribe(cycleWeatherData => this.cycleWeatherData = cycleWeatherData)
+                return this.weather.cycleWeatherDataStorage$;
+              }),
+            );
+          }),
+        )
+        .subscribe(
+          cycleWeatherData => (this.cycleWeatherData = cycleWeatherData),
+        ),
     );
   }
 
@@ -111,12 +151,16 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   }
 
   next() {
-    let i = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
+    let i = this.locationManagement.locations.findIndex(
+      x => x.name === this.weatherData.name,
+    );
     if (i === -1) {
       i = 0;
     }
-    if (i !== (this.locationManagement.locations.length - 1)) {
-      this.locationManagement.getData(this.locationManagement.locations[++i].id);
+    if (i !== this.locationManagement.locations.length - 1) {
+      this.locationManagement.getData(
+        this.locationManagement.locations[++i].id,
+      );
     } else {
       this.locationManagement.getData(this.locationManagement.locations[0].id);
     }
@@ -125,14 +169,22 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   }
 
   previous() {
-    let i = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
+    let i = this.locationManagement.locations.findIndex(
+      x => x.name === this.weatherData.name,
+    );
     if (i === -1) {
       i = 0;
     }
     if (i === 0) {
-      this.locationManagement.getData(this.locationManagement.locations[this.locationManagement.locations.length - 1].id);
+      this.locationManagement.getData(
+        this.locationManagement.locations[
+          this.locationManagement.locations.length - 1
+        ].id,
+      );
     } else {
-      this.locationManagement.getData(this.locationManagement.locations[--i].id);
+      this.locationManagement.getData(
+        this.locationManagement.locations[--i].id,
+      );
     }
     this.isOpenedNotificationCenter = false;
     this.scrollState(this.isOpenedNotificationCenter);
@@ -140,7 +192,9 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
 
   changeState() {
     this.locationManagement.manage(this.weatherData);
-    this.selectedIndex = this.locationManagement.locations.findIndex(x => x.name === this.weatherData.name);
+    this.selectedIndex = this.locationManagement.locations.findIndex(
+      x => x.name === this.weatherData.name,
+    );
     this.isShown = !this.isShown;
     if (this.timerIdNotify) {
       clearTimeout(this.timerIdNotify);
@@ -178,11 +232,26 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   }
 
   private checkNotifications() {
-    this.pressureData = this.notificationCenterService.pressureNotify(this.weatherData, this.forecastDays);
-    this.precipitationData = this.notificationCenterService.precipitationNotify(this.forecastDays);
-    this.tempData = this.notificationCenterService.tempNotify(this.weatherData.main.temp, this.forecastDays);
-    this.windData = this.notificationCenterService.windNotify(this.forecastDays);
+    this.pressureData = this.notificationCenterService.pressureNotify(
+      this.weatherData,
+      this.forecastDays,
+    );
+    this.precipitationData = this.notificationCenterService.precipitationNotify(
+      this.forecastDays,
+    );
+    this.tempData = this.notificationCenterService.tempNotify(
+      this.weatherData.main.temp,
+      this.forecastDays,
+    );
+    this.windData = this.notificationCenterService.windNotify(
+      this.forecastDays,
+    );
 
-    this.notification = !!(this.pressureData || this.precipitationData.length || this.tempData || this.windData);
+    this.notification = !!(
+      this.pressureData ||
+      this.precipitationData.length ||
+      this.tempData ||
+      this.windData
+    );
   }
 }

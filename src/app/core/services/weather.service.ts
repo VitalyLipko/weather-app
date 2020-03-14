@@ -2,18 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, ReplaySubject, of } from 'rxjs';
 import { retryWhen, mergeMap, delay } from 'rxjs/operators';
-
-import { Position } from '../models/position.model';
-import { WeatherData } from '../models/weather-data.model';
-import { ForecastData } from '../models/forecast-data.model';
-import { CycleWeatherData } from '../models/cycle-weather-data.model';
-import { GroupWeatherData } from '../models/group-weather-data.model';
-import { List } from '../models/list.model';
+import {
+  WeatherData,
+  ForecastData,
+  CycleWeatherData,
+  GroupWeatherData,
+  List,
+  Position,
+} from '../models';
 
 const apiKey = 'f25ad0c5cec3176c83ad8d9daddb8fe2';
 const defaultDelay = 250;
 const defaultBackoff = 1000;
-
 
 interface UrlApi {
   readonly weather: string;
@@ -22,21 +22,27 @@ interface UrlApi {
   readonly cycle: string;
 }
 
-function retryWithBackoff(maxRetry: number, delayMs = defaultDelay, backoffMs = defaultBackoff) {
+function retryWithBackoff<T>(
+  maxRetry: number,
+  delayMs = defaultDelay,
+  backoffMs = defaultBackoff,
+) {
   let retries = maxRetry;
 
-  return (src: Observable<any>) =>
+  return (src: Observable<T>) =>
     src.pipe(
-      retryWhen((errors: Observable<any>) => errors.pipe(
-        mergeMap(error => {
-          if (retries-- > 0) {
-            const backoffTime = delayMs + (maxRetry - retries) * backoffMs;
-            return of(error).pipe(delay(backoffTime));
-          }
+      retryWhen((errors: Observable<any>) =>
+        errors.pipe(
+          mergeMap(error => {
+            if (retries-- > 0) {
+              const backoffTime = delayMs + (maxRetry - retries) * backoffMs;
+              return of(error).pipe(delay(backoffTime));
+            }
 
-          return handleError(error);
-        })
-      ))
+            return handleError(error);
+          }),
+        ),
+      ),
     );
 }
 
@@ -46,7 +52,10 @@ function handleError(error: HttpErrorResponse) {
   if (error.error instanceof ErrorEvent) {
     console.error('An error occurred: ', error.error.message);
   } else {
-    console.error(`Openweathermap API returned code ${error.status} ` + `body was: ${error.error.message}`);
+    console.error(
+      `Openweathermap API returned code ${error.status} ` +
+        `body was: ${error.error.message}`,
+    );
   }
 
   if (error.url.includes('weather?')) {
@@ -65,7 +74,7 @@ function handleError(error: HttpErrorResponse) {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WeatherService {
   private urlApi: UrlApi = {
@@ -77,7 +86,10 @@ export class WeatherService {
 
   private weatherDataStorage = new ReplaySubject<WeatherData>(1, 2000);
   private forecastDataStorage = new ReplaySubject<ForecastData>(1, 2000);
-  private cycleWeatherDataStorage = new ReplaySubject<CycleWeatherData>(1, 2000);
+  private cycleWeatherDataStorage = new ReplaySubject<CycleWeatherData>(
+    1,
+    2000,
+  );
   weatherDataStorage$ = this.weatherDataStorage.asObservable();
   forecastDataStorage$ = this.forecastDataStorage.asObservable();
   cycleWeatherDataStorage$ = this.cycleWeatherDataStorage.asObservable();
@@ -87,7 +99,7 @@ export class WeatherService {
   isDataLoaded$ = this._isDataLoaded.asObservable();
   forecastTz: number;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   set isDataLoaded(state: boolean) {
     this._isDataLoaded.next(state);
@@ -98,54 +110,79 @@ export class WeatherService {
   }
 
   getWeatherDataByPosition(position: Position): Observable<WeatherData> {
-    return this.http.get<WeatherData>(
-      // tslint:disable-next-line: max-line-length
-      `${this.urlApi.weather}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retryWithBackoff(2));
+    return this.http
+      .get<WeatherData>(
+        `${this.urlApi.weather}lat=${position.latitude.toFixed(
+          2,
+        )}&lon=${position.longitude.toFixed(
+          2,
+        )}&units=metric&lang=ru&appid=${apiKey}`,
+      )
+      .pipe(retryWithBackoff(2));
   }
 
   getForecastDataByPosition(position: Position): Observable<ForecastData> {
-    return this.http.get<ForecastData>(
-      // tslint:disable-next-line: max-line-length
-      `${this.urlApi.forecast}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retryWithBackoff(2));
+    return this.http
+      .get<ForecastData>(
+        `${this.urlApi.forecast}lat=${position.latitude.toFixed(
+          2,
+        )}&lon=${position.longitude.toFixed(
+          2,
+        )}&units=metric&lang=ru&appid=${apiKey}`,
+      )
+      .pipe(retryWithBackoff(2));
   }
 
   getWeatherDataByName(name: string): Observable<WeatherData> {
-    return this.http.get<WeatherData>(
-      `${this.urlApi.weather}q=${name}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retryWithBackoff(2));
+    return this.http
+      .get<WeatherData>(
+        `${this.urlApi.weather}q=${name}&units=metric&lang=ru&appid=${apiKey}`,
+      )
+      .pipe(retryWithBackoff(2));
   }
 
   getForecastDataByName(name: string): Observable<ForecastData> {
-    return this.http.get<ForecastData>(
-      `${this.urlApi.forecast}q=${name}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retryWithBackoff(2));
+    return this.http
+      .get<ForecastData>(
+        `${this.urlApi.forecast}q=${name}&units=metric&lang=ru&appid=${apiKey}`,
+      )
+      .pipe(retryWithBackoff(2));
   }
 
   getGroupWeatherData(idList: string): Observable<GroupWeatherData> {
-    return this.http.get<GroupWeatherData>(
-      `${this.urlApi.group}id=${idList}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retryWithBackoff(1));
+    return this.http
+      .get<GroupWeatherData>(
+        `${this.urlApi.group}id=${idList}&units=metric&lang=ru&appid=${apiKey}`,
+      )
+      .pipe(retryWithBackoff(1));
   }
 
   getCycleWeatherData(position: Position): Observable<CycleWeatherData> {
-    return this.http.get<CycleWeatherData>(
-      // tslint:disable-next-line: max-line-length
-      `${this.urlApi.cycle}lat=${(position.latitude).toFixed(2)}&lon=${(position.longitude).toFixed(2)}&units=metric&lang=ru&cnt=6&appid=${apiKey}`
-    ).pipe(retryWithBackoff(2));
+    return this.http
+      .get<CycleWeatherData>(
+        `${this.urlApi.cycle}lat=${position.latitude.toFixed(
+          2,
+        )}&lon=${position.longitude.toFixed(
+          2,
+        )}&units=metric&lang=ru&cnt=6&appid=${apiKey}`,
+      )
+      .pipe(retryWithBackoff(2));
   }
 
   getWeatherDataById(id: number): Observable<WeatherData> {
-    return this.http.get<WeatherData>(
-      `${this.urlApi.weather}id=${id}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retryWithBackoff(2));
+    return this.http
+      .get<WeatherData>(
+        `${this.urlApi.weather}id=${id}&units=metric&lang=ru&appid=${apiKey}`,
+      )
+      .pipe(retryWithBackoff(2));
   }
 
   getForecastDataById(id: number): Observable<ForecastData> {
-    return this.http.get<ForecastData>(
-      `${this.urlApi.forecast}id=${id}&units=metric&lang=ru&appid=${apiKey}`
-    ).pipe(retryWithBackoff(2));
+    return this.http
+      .get<ForecastData>(
+        `${this.urlApi.forecast}id=${id}&units=metric&lang=ru&appid=${apiKey}`,
+      )
+      .pipe(retryWithBackoff(2));
   }
 
   saveWeatherData(data: WeatherData) {
@@ -214,5 +251,4 @@ export class WeatherService {
 
     return forecastDay;
   }
-
 }

@@ -4,18 +4,20 @@ import { LowerCasePipe } from '@angular/common';
 import { FormControl, Validators } from '@angular/forms';
 import { tap, switchMap } from 'rxjs/operators';
 
-import { WeatherService } from 'src/app/core/services/weather.service';
-import { GeolocationService } from 'src/app/core/services/geolocation.service';
 import { inputAnimation } from 'src/app/root/animations';
+import { WeatherService, GeolocationService } from 'src/app/core/services';
 
 @Component({
   selector: 'wa-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
-  animations: [inputAnimation]
+  animations: [inputAnimation],
 })
 export class ToolbarComponent implements OnInit {
-  nameLocation = new FormControl('', [Validators.minLength(2), Validators.required]);
+  nameLocation = new FormControl('', [
+    Validators.minLength(2),
+    Validators.required,
+  ]);
   isExpanded = false;
   isBgTransparent = true;
   isShowed = true;
@@ -29,34 +31,20 @@ export class ToolbarComponent implements OnInit {
     private router: Router,
     private lowerCasePipe: LowerCasePipe,
     public geolocation: GeolocationService,
-    private renderer: Renderer2
-  ) { }
+    private renderer: Renderer2,
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   search() {
     this.weather.isDataLoaded = false;
-    this.weather.getWeatherDataByName(this.nameLocation.value).pipe(
-      tap(
-        weatherData => {
-          this.weather.saveWeatherData(weatherData);
-          this.nameLocation.setValue('');
-        },
-        error => {
-          console.error(error.message);
-          this.weather.errorStatus = error.error.status;
-          this.nameLocation.setValue('');
-          this.weather.isDataLoaded = true;
-          this.router.navigate(['/search']);
-        }
-      ),
-      switchMap(weatherData => this.weather.getForecastDataByName(weatherData.name).pipe(
+    this.weather
+      .getWeatherDataByName(this.nameLocation.value)
+      .pipe(
         tap(
-          forecastData => {
-            this.weather.saveForecastData(forecastData);
-            this.weather.isDataLoaded = true;
-            this.router.navigate([`${this.lowerCasePipe.transform(forecastData.city.name)}`]);
+          weatherData => {
+            this.weather.saveWeatherData(weatherData);
+            this.nameLocation.setValue('');
           },
           error => {
             console.error(error.message);
@@ -64,17 +52,39 @@ export class ToolbarComponent implements OnInit {
             this.nameLocation.setValue('');
             this.weather.isDataLoaded = true;
             this.router.navigate(['/search']);
-          }
+          },
         ),
-        switchMap(forecastData => this.weather.getCycleWeatherData({
-          latitude: forecastData.city.coord.lat,
-          longitude: forecastData.city.coord.lon
-        }))
-      ))
-    ).subscribe(
-      cycleWeatherData => this.weather.saveCycleWeatherData(cycleWeatherData),
-      error => console.error(error.message)
-    );
+        switchMap(weatherData =>
+          this.weather.getForecastDataByName(weatherData.name).pipe(
+            tap(
+              forecastData => {
+                this.weather.saveForecastData(forecastData);
+                this.weather.isDataLoaded = true;
+                this.router.navigate([
+                  `${this.lowerCasePipe.transform(forecastData.city.name)}`,
+                ]);
+              },
+              error => {
+                console.error(error.message);
+                this.weather.errorStatus = error.error.status;
+                this.nameLocation.setValue('');
+                this.weather.isDataLoaded = true;
+                this.router.navigate(['/search']);
+              },
+            ),
+            switchMap(forecastData =>
+              this.weather.getCycleWeatherData({
+                latitude: forecastData.city.coord.lat,
+                longitude: forecastData.city.coord.lon,
+              }),
+            ),
+          ),
+        ),
+      )
+      .subscribe(
+        cycleWeatherData => this.weather.saveCycleWeatherData(cycleWeatherData),
+        error => console.error(error.message),
+      );
   }
 
   searchByEnter() {
@@ -96,5 +106,4 @@ export class ToolbarComponent implements OnInit {
   controlNavbar() {
     this.isShowed = !this.isExpanded && !this.isShowed;
   }
-
 }

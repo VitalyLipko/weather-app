@@ -1,12 +1,18 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-
-import { List } from 'src/app/core/models/list.model';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import { List } from 'src/app/core/models';
 
 @Component({
   selector: 'wa-notification-center',
   templateUrl: './notification-center.component.html',
   styleUrls: ['./notification-center.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotificationCenterComponent implements OnInit {
   @Input() timezoneOffset: string;
@@ -20,7 +26,7 @@ export class NotificationCenterComponent implements OnInit {
   changeTemp: string;
   changePressure: string;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     if (this.pressureData) {
@@ -38,5 +44,4 @@ export class NotificationCenterComponent implements OnInit {
   onClose() {
     this.close.emit(null);
   }
-
 }

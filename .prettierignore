@@ -1,0 +1,15 @@
+**/*.md
+**/*.svg
+**/test.ts
+
+.prettierrc
+
+.vscode/*
+node_modules/*
+dist/*
+docs/*
+
+tslint.json
+.angulardoc.json
+package.json
+package-lock.json

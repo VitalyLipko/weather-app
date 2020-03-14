@@ -1,4 +1,4 @@
-interface Main {
+export interface MainParameters {
   temp: number;
   pressure: number;
   humidity: number;

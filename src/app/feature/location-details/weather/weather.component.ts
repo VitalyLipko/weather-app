@@ -1,17 +1,24 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy, NgZone, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  ChangeDetectionStrategy,
+  NgZone,
+  ChangeDetectorRef,
+  OnDestroy,
+} from '@angular/core';
 import { fromEvent, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { btnCollapseAnimation } from 'src/app/root/animations';
-import { WeatherData } from 'src/app/core/models/weather-data.model';
-import { List } from 'src/app/core/models/list.model';
+import { WeatherData, List } from 'src/app/core/models';
 
 @Component({
   selector: 'wa-weather',
   templateUrl: './weather.component.html',
   styleUrls: ['./weather.component.scss'],
   animations: [btnCollapseAnimation],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WeatherComponent implements OnInit, OnDestroy {
   @Input() weatherData: WeatherData;
@@ -20,13 +27,15 @@ export class WeatherComponent implements OnInit, OnDestroy {
   isCollapsed = true;
   private unsubscribe = new Subject<any>();
 
-  constructor(private zone: NgZone, private cdr: ChangeDetectorRef) { }
+  constructor(private zone: NgZone, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.calc();
-    this.zone.runOutsideAngular(() => fromEvent(window, 'resize')
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(() => this.calc()));
+    this.zone.runOutsideAngular(() =>
+      fromEvent(window, 'resize')
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe(() => this.calc()),
+    );
   }
 
   ngOnDestroy() {

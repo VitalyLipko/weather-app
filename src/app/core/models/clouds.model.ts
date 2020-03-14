@@ -1,3 +1,3 @@
-interface Clouds {
+export interface Clouds {
   all: number;
 }

@@ -1,4 +1,4 @@
-interface Sys {
+export interface Sys {
   type: number;
   id: number;
   message: number;

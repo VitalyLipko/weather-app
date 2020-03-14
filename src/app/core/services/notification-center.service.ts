@@ -1,23 +1,24 @@
 import { Injectable } from '@angular/core';
 
 import { WeatherParamsPipe } from 'src/app/shared/pipes/weather-params.pipe';
-import { List } from '../models/list.model';
-import { WeatherData } from '../models/weather-data.model';
+import { WeatherData, List } from '../models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotificationCenterService {
+  constructor(private weatherParamsPipe: WeatherParamsPipe) {}
 
-  constructor(private weatherParamsPipe: WeatherParamsPipe) { }
-
-  pressureNotify(weatherData: WeatherData, forecastData: List[]): [List, number] {
+  pressureNotify(
+    weatherData: WeatherData,
+    forecastData: List[],
+  ): [List, number] {
     let delta: any;
 
     for (let i = 0; i !== forecastData.length; i++) {
       delta = this.weatherParamsPipe.transform(
-        (weatherData.main.pressure - forecastData[i].main.pressure),
-        'pressure'
+        weatherData.main.pressure - forecastData[i].main.pressure,
+        'pressure',
       );
       if (delta >= 10 || delta <= -10) {
         return [forecastData[i], delta];
@@ -30,11 +31,14 @@ export class NotificationCenterService {
   precipitationNotify(forecastData: List[]): List[] {
     const data: List[] = [];
     forecastData.forEach(day => {
-      if (day.weather[0].id >= 200 && day.weather[0].id < 300) {// событие "гроза"
+      if (day.weather[0].id >= 200 && day.weather[0].id < 300) {
+        // событие "гроза"
         data.push(day);
-      } else if (day.weather[0].id >= 502 && day.weather[0].id < 600) {// событие "сильный дождь"
+      } else if (day.weather[0].id >= 502 && day.weather[0].id < 600) {
+        // событие "сильный дождь"
         data.push(day);
-      } else if (day.weather[0].id === 602 || day.weather[0].id === 622) {// событие "сильный снегопад"
+      } else if (day.weather[0].id === 602 || day.weather[0].id === 622) {
+        // событие "сильный снегопад"
         data.push(day);
       }
     });

@@ -16,21 +16,16 @@ import { LayoutComponent } from './components/layout/layout.component';
     WeatherParamsPipe,
     LocationsPaginatorDirective,
     ToolbarComponent,
-    LayoutComponent
+    LayoutComponent,
   ],
-  imports: [
-    CommonModule,
-    TooltipModule,
-    ReactiveFormsModule,
-    RouterModule
-  ],
+  imports: [CommonModule, TooltipModule, ReactiveFormsModule, RouterModule],
   exports: [
     WeatherParamsPipe,
     LocationCardComponent,
     CommonModule,
     TooltipModule,
     LocationsPaginatorDirective,
-    LayoutComponent
-  ]
+    LayoutComponent,
+  ],
 })
-export class SharedModule { }
+export class SharedModule {}

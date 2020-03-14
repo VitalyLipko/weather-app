@@ -15,23 +15,18 @@ import { WeatherParamsPipe } from '../shared/pipes/weather-params.pipe';
 registerLocaleData(localeRu);
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+    }),
     CoreModule,
-    TooltipModule.forRoot()
+    TooltipModule.forRoot(),
   ],
-  providers: [
-    LowerCasePipe,
-    WeatherParamsPipe
-  ],
-  bootstrap: [
-    AppComponent
-  ]
+  providers: [LowerCasePipe, WeatherParamsPipe],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
