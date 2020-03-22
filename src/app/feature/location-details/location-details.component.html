@@ -7,7 +7,7 @@
       >
         <div
           class="location-pagination rounded-circle mr-1"
-          *ngFor="let location of locationManagement.locations; let i = index"
+          *ngFor="let location of favoritesService.favorites; let i = index"
           [class.selected]="i === selectedIndex"
         ></div>
       </div>
@@ -23,9 +23,14 @@
           >
             <i class="fas fa-chevron-left"></i>
           </button>
-          {{weatherData?.name}}
-          <button type="button" class="btn p-1 mr-2" aria-label="Notification center" tooltip="Центр уведомлений"
-            (click)="onClick()">
+          {{ weatherData?.name }}
+          <button
+            type="button"
+            class="btn p-1 mr-2"
+            aria-label="Notification center"
+            tooltip="Центр уведомлений"
+            (click)="onClick()"
+          >
             <i class="far fa-bell" [class.ring]="notification"></i>
           </button>
           <button
@@ -70,11 +75,11 @@
       id="bookmark"
       class="btn btn-custom rounded-circle mr-4"
       aria-label="Add or delete bookmark"
-      [tooltip]="locationManagement.isBookmark ? 'Удалить' : 'Добавить'"
+      [tooltip]="favoritesService.isBookmark ? 'Удалить' : 'Добавить'"
       (click)="changeState()"
     >
       <div
-        [@addDeleteAnimation]="locationManagement.isBookmark ? 'delete' : 'add'"
+        [@addDeleteAnimation]="favoritesService.isBookmark ? 'delete' : 'add'"
         id="btn-label"
       >
         +
@@ -109,7 +114,7 @@
   >
     <span class="text-center mr-3">
       {{ weatherData?.name }}
-      <ng-container *ngIf="locationManagement.isBookmark; else deleteTemplate">
+      <ng-container *ngIf="favoritesService.isBookmark; else deleteTemplate">
         добавлен в раздел
       </ng-container>
       <ng-template #deleteTemplate>

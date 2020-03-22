@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { AlertModule } from 'ngx-bootstrap/alert';
 
 import { LocationCardComponent } from './components/location-card/location-card.component';
 import { WeatherParamsPipe } from './pipes/weather-params.pipe';
@@ -18,7 +19,13 @@ import { LayoutComponent } from './components/layout/layout.component';
     ToolbarComponent,
     LayoutComponent,
   ],
-  imports: [CommonModule, TooltipModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    TooltipModule.forRoot(),
+    ReactiveFormsModule,
+    RouterModule,
+    AlertModule.forRoot(),
+  ],
   exports: [
     WeatherParamsPipe,
     LocationCardComponent,
@@ -26,6 +33,7 @@ import { LayoutComponent } from './components/layout/layout.component';
     TooltipModule,
     LocationsPaginatorDirective,
     LayoutComponent,
+    AlertModule,
   ],
 })
 export class SharedModule {}

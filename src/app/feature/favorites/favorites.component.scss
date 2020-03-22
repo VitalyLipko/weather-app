@@ -1,3 +1,11 @@
+.favorites-container {
+  min-height: calc(100vh - 152px);
+
+  .alert-container {
+    min-height: inherit;
+  }
+}
+
 .location:hover:not(.ghost) {
   box-shadow: 0.3em 0.4em 1.4em -0.4em var(--dark);
   transition: box-shadow 0.2s ease-in;
