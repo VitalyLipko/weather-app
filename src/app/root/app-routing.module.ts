@@ -4,30 +4,37 @@ import { Routes, RouterModule } from '@angular/router';
 const routes: Routes = [
   {
     path: 'search',
-    loadChildren: () => import('../feature/location-search/location-search.module').then(mod => mod.LocationSearchModule)
+    loadChildren: () =>
+      import('../feature/location-search/location-search.module').then(
+        mod => mod.LocationSearchModule,
+      ),
   },
   {
-    path: 'locations',
-    loadChildren: () => import('../feature/locations/locations.module').then(mod => mod.LocationsModule)
+    path: 'favorites',
+    loadChildren: () =>
+      import('../feature/favorites/favorites.module').then(
+        mod => mod.FavoritesModule,
+      ),
   },
   {
     path: ':currentLocation',
-    loadChildren: () => import('../feature/location-details/location-details.module').then(mod => mod.LocationDetailsModule)
+    loadChildren: () =>
+      import('../feature/location-details/location-details.module').then(
+        mod => mod.LocationDetailsModule,
+      ),
   },
-  { path: '', redirectTo: '/search', pathMatch: 'full' },
+  { path: '', redirectTo: '/favorites', pathMatch: 'full' },
   {
     path: '**',
-    loadChildren: () => import('../feature/page404/page404.module').then(mod => mod.Page404Module)
-  }
-
+    loadChildren: () =>
+      import('../feature/page404/page404.module').then(
+        mod => mod.Page404Module,
+      ),
+  },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forRoot(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

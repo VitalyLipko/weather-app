@@ -6,7 +6,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { WeatherService } from './weather.service';
 import { GroupWeatherData, WeatherData } from '../models';
 
-interface Locations {
+interface Location {
   id: number;
   name: string;
 }
@@ -14,27 +14,35 @@ interface Locations {
 @Injectable({
   providedIn: 'root',
 })
-export class LocationManagementService {
+export class FavoritesService {
   isBookmark: boolean;
-  locations: Locations[] = [];
+  favorites: Location[];
   groupWeatherData: GroupWeatherData;
 
   constructor(
     private weather: WeatherService,
     private router: Router,
     private lowerCasePipe: LowerCasePipe,
-  ) {}
+  ) {
+    const storageItems = localStorage.getItem('favorites');
+
+    if (storageItems) {
+      this.favorites = JSON.parse(storageItems);
+    } else {
+      this.favorites = [];
+    }
+  }
 
   isLocationExist(name: string): boolean {
-    return !!this.locations.find(location => location.name === name);
+    return !!this.favorites.find(location => location.name === name);
   }
 
   enablePagination(): boolean {
-    return this.locations.length > 1 && this.router.url.includes('locations/');
+    return this.favorites.length > 1 && this.router.url.includes('favorites/');
   }
 
   manage(weatherData: WeatherData) {
-    const location: Locations = {
+    const location: Location = {
       id: 0,
       name: '',
     };
@@ -42,9 +50,9 @@ export class LocationManagementService {
     location.name = weatherData.name;
     this.isBookmark = !this.isBookmark;
     if (this.isBookmark) {
-      if (this.locations.length < 15) {
-        this.locations.push(location);
-        this.locations = this.locations.sort((a, b) => {
+      if (this.favorites.length < 15) {
+        this.favorites.push(location);
+        this.favorites = this.favorites.sort((a, b) => {
           if (a.name > b.name) {
             return 1;
           }
@@ -53,20 +61,20 @@ export class LocationManagementService {
           }
           return 0;
         });
-        localStorage.setItem('locations', JSON.stringify(this.locations));
+        localStorage.setItem('favorites', JSON.stringify(this.favorites));
       } else {
         this.isBookmark = false;
       }
     } else {
-      if (this.locations.length === 1) {
-        this.locations = [];
-        localStorage.removeItem('locations');
+      if (this.favorites.length === 1) {
+        this.favorites = [];
+        localStorage.removeItem('favorites');
       } else {
-        this.locations.splice(
-          this.locations.findIndex(x => x.id === location.id),
+        this.favorites.splice(
+          this.favorites.findIndex(x => x.id === location.id),
           1,
         );
-        localStorage.setItem('locations', JSON.stringify(this.locations));
+        localStorage.setItem('favorites', JSON.stringify(this.favorites));
       }
     }
   }
@@ -95,11 +103,11 @@ export class LocationManagementService {
                 this.weather.saveForecastData(forecastData);
                 this.weather.isDataLoaded = true;
                 if (
-                  this.router.url.substr(1, 9) === 'locations' &&
+                  this.router.url.substr(1, 9) === 'favorites' &&
                   this.isLocationExist(forecastData.city.name)
                 ) {
                   this.router.navigate([
-                    `/locations/${this.lowerCasePipe.transform(
+                    `/favorites/${this.lowerCasePipe.transform(
                       forecastData.city.name,
                     )}`,
                   ]);
@@ -135,15 +143,15 @@ export class LocationManagementService {
     if (!name) {
       return;
     }
-    if (this.locations.length === 1) {
-      this.locations = [];
-      localStorage.removeItem('locations');
+    if (this.favorites.length === 1) {
+      this.favorites = [];
+      localStorage.removeItem('favorites');
     } else {
-      this.locations.splice(
-        this.locations.findIndex(x => x.name === name),
+      this.favorites.splice(
+        this.favorites.findIndex(x => x.name === name),
         1,
       );
-      localStorage.setItem('locations', JSON.stringify(this.locations));
+      localStorage.setItem('favorites', JSON.stringify(this.favorites));
       this.groupWeatherData.list.splice(
         this.groupWeatherData.list.findIndex(list => list.name === name),
         1,

@@ -1,0 +1,38 @@
+<wa-layout>
+  <div class="favorites-container">
+    <div
+      *ngIf="!favoritesService.favorites.length; else locationsTemplate"
+      class="alert-container row justify-content-center align-items-center"
+    >
+      <alert type="info">
+        <span class="alert-heading">
+          <i class="fas fa-exclamation-circle mr-2"></i>
+          <span>Нет сохраненных мест</span>
+        </span>
+      </alert>
+    </div>
+    <ng-template #locationsTemplate>
+      <div class="row justify-content-md-center pt-2">
+        <ng-container
+          *ngFor="
+            let location of (groupWeatherData$ | async)?.list;
+            last as isLast;
+            trackBy: trackByFn
+          "
+        >
+          <wa-location-card
+            class="location align-items-start col-6 col-md-4 col-lg-3 col-xl-2 mb-3"
+            [location]="location"
+            [enableClosing]="true"
+            [ngClass]="{
+              'mr-lg-2': !isLast,
+              ghost: !location
+            }"
+            (open)="favoritesService.getData(location?.id)"
+            (close)="favoritesService.delete(location?.name)"
+          ></wa-location-card>
+        </ng-container>
+      </div>
+    </ng-template>
+  </div>
+</wa-layout>

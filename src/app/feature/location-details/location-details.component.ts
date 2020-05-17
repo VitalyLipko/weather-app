@@ -23,7 +23,7 @@ import {
 } from 'src/app/core/models';
 import {
   WeatherService,
-  LocationManagementService,
+  FavoritesService,
   TagService,
   NotificationCenterService,
 } from 'src/app/core/services';
@@ -57,7 +57,7 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   @HostListener('window:load') getNewData() {
     const id = Number(localStorage.getItem('lastId'));
     if (id) {
-      this.locationManagement.getData(id);
+      this.favoritesService.getData(id);
     } else {
       this.router.navigate(['/search']);
     }
@@ -65,7 +65,7 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
 
   constructor(
     public weather: WeatherService,
-    public locationManagement: LocationManagementService,
+    public favoritesService: FavoritesService,
     private seo: TagService,
     private renderer: Renderer2,
     private router: Router,
@@ -81,12 +81,7 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
             this.closeNotify();
             window.scrollTo(0, 0);
             this.weatherData = weatherData;
-            if (localStorage.getItem('locations')) {
-              this.locationManagement.locations = JSON.parse(
-                localStorage.getItem('locations'),
-              );
-            }
-            this.locationManagement.isBookmark = this.locationManagement.isLocationExist(
+            this.favoritesService.isBookmark = this.favoritesService.isLocationExist(
               weatherData.name,
             );
             this.seo.setPageTitle(
@@ -121,7 +116,7 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
                   this.forecastData.list,
                   this.weather.forecastTz,
                 );
-                this.selectedIndex = this.locationManagement.locations.findIndex(
+                this.selectedIndex = this.favoritesService.favorites.findIndex(
                   x => x.name === this.weatherData.name,
                 );
                 this.checkNotifications();
@@ -151,48 +146,44 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   }
 
   next() {
-    let i = this.locationManagement.locations.findIndex(
+    let i = this.favoritesService.favorites.findIndex(
       x => x.name === this.weatherData.name,
     );
     if (i === -1) {
       i = 0;
     }
-    if (i !== this.locationManagement.locations.length - 1) {
-      this.locationManagement.getData(
-        this.locationManagement.locations[++i].id,
-      );
+    if (i !== this.favoritesService.favorites.length - 1) {
+      this.favoritesService.getData(this.favoritesService.favorites[++i].id);
     } else {
-      this.locationManagement.getData(this.locationManagement.locations[0].id);
+      this.favoritesService.getData(this.favoritesService.favorites[0].id);
     }
     this.isOpenedNotificationCenter = false;
     this.scrollState(this.isOpenedNotificationCenter);
   }
 
   previous() {
-    let i = this.locationManagement.locations.findIndex(
+    let i = this.favoritesService.favorites.findIndex(
       x => x.name === this.weatherData.name,
     );
     if (i === -1) {
       i = 0;
     }
     if (i === 0) {
-      this.locationManagement.getData(
-        this.locationManagement.locations[
-          this.locationManagement.locations.length - 1
+      this.favoritesService.getData(
+        this.favoritesService.favorites[
+          this.favoritesService.favorites.length - 1
         ].id,
       );
     } else {
-      this.locationManagement.getData(
-        this.locationManagement.locations[--i].id,
-      );
+      this.favoritesService.getData(this.favoritesService.favorites[--i].id);
     }
     this.isOpenedNotificationCenter = false;
     this.scrollState(this.isOpenedNotificationCenter);
   }
 
   changeState() {
-    this.locationManagement.manage(this.weatherData);
-    this.selectedIndex = this.locationManagement.locations.findIndex(
+    this.favoritesService.manage(this.weatherData);
+    this.selectedIndex = this.favoritesService.favorites.findIndex(
       x => x.name === this.weatherData.name,
     );
     this.isShown = !this.isShown;
@@ -220,7 +211,7 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   openLocation(id: number) {
     this.isOpenedNotificationCenter = false;
     this.scrollState(this.isOpenedNotificationCenter);
-    this.locationManagement.getData(id);
+    this.favoritesService.getData(id);
   }
 
   private scrollState(state: boolean) {

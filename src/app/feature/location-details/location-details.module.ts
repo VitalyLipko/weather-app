@@ -16,15 +16,8 @@ import { LocationsDetailsRoutingModule } from './locations-details-routing.modul
     ForecastComponent,
     NearbyComponent,
     NotificationCenterComponent,
-    WeatherComponent
+    WeatherComponent,
   ],
-  imports: [
-    SharedModule,
-    LocationsDetailsRoutingModule,
-    CollapseModule
-  ],
-  entryComponents: [
-    LocationCardComponent
-  ]
+  imports: [SharedModule, LocationsDetailsRoutingModule, CollapseModule],
 })
-export class LocationDetailsModule { }
+export class LocationDetailsModule {}
