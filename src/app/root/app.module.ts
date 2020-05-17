@@ -4,6 +4,7 @@ import { registerLocaleData, LowerCasePipe } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { Angulartics2Module } from 'angulartics2';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -23,6 +24,7 @@ registerLocaleData(localeRu);
       enabled: environment.production,
     }),
     CoreModule,
+    Angulartics2Module.forRoot(),
   ],
   providers: [LowerCasePipe, WeatherParamsPipe],
   bootstrap: [AppComponent],
